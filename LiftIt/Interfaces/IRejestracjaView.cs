@@ -4,8 +4,7 @@ using System.Text;
 
 namespace LiftIt.Interfaces
 {
-    internal interface ILogowanieView
+    internal interface IRejestracjaView
     {
-
     }
 }

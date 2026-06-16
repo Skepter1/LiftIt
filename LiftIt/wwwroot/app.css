@@ -1,6 +1,109 @@
+:root {
+    /* Kolory tła dark-mode */
+    --body-bg: #121212; /* Najciemniejsze tło */
+    --card-bg: #1e1e1e; /* Ciemny grafit na karty ćwiczeń/logowania */
+    /* Pola formularzy (Inputs) */
+    --input-bg: #2a2a2a; /* Szarawe tło dla pól tekstowych */
+    --input-border: #333333; /* Kolor ramki inputa */
+    /* Kolory akcentów (Sportowy charakter) */
+    --accent-color: #ffcc00; /* Neonowy żółty/złoty dla głównych przycisków i rekordów */
+    --accent-hover: #e6b800; /* Ciemniejszy odcień przy najechaniu */
+    /* Kolory tekstu */
+    --text-main: #ffffff; /* Główny biały tekst */
+    --text-darker: #cccccc; /* Trochę ciemniejszy biały tekst - labele itp. */
+    --text-error: #ff4d4d; /* Czerwony dla komunikatów o błędach */
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+    padding: 20px;
+    background-color: var(--body-bg); /* Ciemne tło w stylu Heavy */
+}
+
+/* Wygląd samej karty auth */
+.auth-card {
+    background-color: var(--card-bg); /* Nieco jaśniejszy grafit dla kontrastu */
+    border-radius: 16px; /* Modne, mocne zaokrąglenie rogów */
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px; /* Żeby na tablecie/PC nie rozjechało się na cały ekran */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); /* Delikatny, głęboki cień */
+    color: var(--text-main);
+    text-align: center;
+}
+
+/* Kontenery na inputy */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+    .input-group label {
+        font-size: 0.85rem;
+        color: var(--text-darker);
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+input::placeholder {
+    color: var(--text-darker);
+}
+
+/* Stylowanie pól tekstowych */
+.form-control {
+    background-color: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    padding: 12px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+    /* Efekt "świecenia" po kliknięciu w pole */
+    .form-control:focus {
+        background-color: var(--input-bg);
+        border-color: var(--accent-color);
+        color: var(--text-main);
+        outline: none;
+        box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
+    }
+
+/* Stylowanie głównego przycisku */
+.btn-primary-custom {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: var(--body-bg);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+    .btn-primary-custom:hover {
+        background-color: var(--accent-hover);
+    }
+
+    /* Efekt kliknięcia przycisku (delikatne zmniejszenie pod palcem) */
+    .btn-primary-custom:active {
+        transform: scale(0.98);
+    }
+
+
 
 a, .btn-link {
     color: #006bb7;

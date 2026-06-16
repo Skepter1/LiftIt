@@ -1,0 +1,36 @@
+.form-control{
+    width: 100%;
+}
+
+h3 {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #ffcc00;
+}
+
+.subtitle {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+input::placeholder {
+    color: var(--text-darker);
+}
+
+/* Odnośnik do rejestracji */
+.register-redirect {
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: var(--text-main-darker);
+}
+
+    .register-redirect a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .register-redirect a:hover {
+            text-decoration: underline;
+        }

@@ -1,8 +1,41 @@
 ﻿@page "/logowanie"
 @layout MainLayout
+@implements ILogowanieView
 
-<h3>Logowanie</h3>
+<div class="auth-container">
+    <div class="auth-card">
+        <h3>Witaj w LiftIt!</h3>
+        <p class="subtitle">Zaloguj się, aby śledzić swoje treningi</p>
+
+        <form @onsubmit="OnZalogujClicked">
+
+            <div class="input-group">
+                <label for="email">Adres E-mail</label>
+                <input id="email" type="email" class="form-control" placeholder="example@email.com" @bind="Email" required />
+            </div>
+
+            <div class="input-group">
+                <label for="password">Hasło</label>
+                <input id="password" type="password" class="form-control" placeholder="••••••••" @bind="Password" required />
+            </div>
+
+            <button type="submit" class="btn-primary-custom">ZALOGUJ SIĘ</button>
+        </form>
+
+        <div class="register-redirect">
+            <span>Nie masz konta? <a href="/rejestracja">Zarejestruj się teraz</a></span>
+        </div>
+
+    </div>
+</div>
 
 @code {
+    // Tutaj w przyszłości dodasz bindowanie pól i wywołanie Prezentera
+    public string Email { get; set; }
+    public string Password { get; set; }
 
+    private void OnZalogujClicked()
+    {
+        // Tutaj wywołanie: _presenter.Zaloguj();
+    }
 }
