@@ -5,14 +5,14 @@
 <div class="auth-container">
     <div class="auth-card">
 
-        <h3>Witaj w LiftIt!</h3>
-        <p class="subtitle">Sign Up</p>
+        <h3>Welcome to LiftIt!</h3>
+        <p class="subtitle">Fill all the fields to sign up.</p>
 
         <form @onsubmit="OnRejestracjaClicked">
 
             <div class="input-group">
-                <label for="fullname">Fullname</label>
-                <input id="fullname" class="form-control" placeholder="Fullname" @bind="Fullname" required />
+                <label for="fullname">Full name</label>
+                <input id="fullname" class="form-control" placeholder="Full name" @bind="Fullname" required />
             </div>
 
             <div class="input-group">
@@ -30,11 +30,11 @@
                 <input id="password-confirm" type="password" class="form-control" placeholder="••••••••" @bind="PasswordConfirm" required />
             </div>
 
-            <button type="submit" class="btn-primary-custom">SIGN UP</button>
+            <button type="submit" class="btn-primary-custom">Sign Up</button>
         </form>
 
         <div class="register-redirect">
-            <span>Already have an account? <a href="/logowanie">Log in</a></span>
+            <span>Already have an account? <a href="/logowanie">Sign in</a></span>
         </div>
 
     </div>

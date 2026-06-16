@@ -4,8 +4,8 @@
 
 <div class="auth-container">
     <div class="auth-card">
-        <h3>Witaj w LiftIt!</h3>
-        <p class="subtitle">Zaloguj się, aby śledzić swoje treningi</p>
+        <h3>Welcome back!</h3>
+        <p class="subtitle">Sign In to track your workouts.</p>
 
         <form @onsubmit="OnZalogujClicked">
 
@@ -19,11 +19,11 @@
                 <input id="password" type="password" class="form-control" placeholder="••••••••" @bind="Password" required />
             </div>
 
-            <button type="submit" class="btn-primary-custom">ZALOGUJ SIĘ</button>
+            <button type="submit" class="btn-primary-custom">Sign In</button>
         </form>
 
         <div class="register-redirect">
-            <span>Nie masz konta? <a href="/rejestracja">Zarejestruj się teraz</a></span>
+            <span>Don't have an account? <a href="/rejestracja">Sign in now!</a></span>
         </div>
 
     </div>
