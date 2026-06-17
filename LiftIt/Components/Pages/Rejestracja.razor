@@ -11,8 +11,8 @@
         <form @onsubmit="OnRejestracjaClicked">
 
             <div class="input-group">
-                <label for="fullname">Full name</label>
-                <input id="fullname" class="form-control" placeholder="Full name" @bind="Fullname" required />
+                <label for="login">Login</label>
+                <input id="login" class="form-control" placeholder="Login" @bind="Login" required />
             </div>
 
             <div class="input-group">
@@ -46,7 +46,7 @@
     private RejestracjaPresenter _presenter;
 
     public event Action SignUpUser;
-    public string Fullname { get; set; }
+    public string Login { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string PasswordConfirm { get; set; }

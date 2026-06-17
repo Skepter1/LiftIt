@@ -23,17 +23,17 @@
 
             var nowyUzytkownik = new Models.Uzytkownik
             {
-                login = _view.Fullname,
+                login = _view.Login,
                 email = _view.Email,
                 password = _view.Password
             };
 
-            //bool sukces = await _dbContext.ZarejestrujUzytkownikaW_MySQL(nowyUzytkownik);
+            bool sukces = await _dbContext.SignUpUserInMySQL(nowyUzytkownik);
 
-            //if (sukces)
-            //{
-            //    // Poinformuj widok o sukcesie, np. przekieruj do logowania
-            //}
+            if (sukces)
+            {
+                // Poinformuj widok o sukcesie, np. przekieruj do logowania
+            }
         }
 
     }

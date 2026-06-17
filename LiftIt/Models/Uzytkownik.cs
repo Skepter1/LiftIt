@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Models
 {
-    internal class Uzytkownik
+    public class Uzytkownik
     {
         public string login { get; set; }
         public string email { get; set; }
