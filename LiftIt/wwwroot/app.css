@@ -18,6 +18,13 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.header-container{
+    border-bottom: 2px solid var(--card-bg);
+    margin-bottom: 10px;
+    color: var(--accent-color)
+}
+
+/*Auth content*/
 .auth-container {
     display: flex;
     justify-content: center;
@@ -57,7 +64,7 @@ input::placeholder {
     color: var(--text-darker);
 }
 
-/* Stylowanie pól tekstowych */
+/* Stylowanie pól tekstowych inputów*/
 .form-control {
     background-color: var(--input-bg);
     border: 2px solid var(--input-border);
@@ -103,7 +110,24 @@ input::placeholder {
         transform: scale(0.98);
     }
 
+.nav-link {
+    color: var(--text-darker);
+    background: none;
+    border: none;
+    padding: 4px 0;
+    transition: color 0.2s;
+}
 
+.card {
+    background-color: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-darker);
+    padding: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    width: 100%;
+}
 
 a, .btn-link {
     color: #006bb7;

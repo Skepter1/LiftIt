@@ -41,14 +41,24 @@
 </div>
 
 @code {
-    // Tutaj w przyszłości dodasz bindowanie pól i wywołanie Prezentera
+    [Inject] public Models.DatabaseContext DbContext { get; set; } // Wstrzykujemy model bazy danych
+
+    private RejestracjaPresenter _presenter;
+
+    public event Action SignUpUser;
     public string Fullname { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string PasswordConfirm { get; set; }
 
+    protected override void OnInitialized()
+    {
+        // Tworzymy prezenter i przekazujemy mu ten Widok (this) oraz Model (DbContext)
+        _presenter = new RejestracjaPresenter(this, DbContext);
+    }
+
     private void OnRejestracjaClicked()
     {
-        // Tutaj wywołanie: _presenter.Zaloguj();
+        SignUpUser?.Invoke();
     }
 }

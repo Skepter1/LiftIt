@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LiftIt.Models;
+using Microsoft.Extensions.Logging;
 
 namespace LiftIt
 {
@@ -20,7 +21,7 @@ namespace LiftIt
     		builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
-            //builder.Services.AddSingleton<DatabaseContext>();
+            builder.Services.AddSingleton<DatabaseContext>();
 
             return builder.Build();
         }
