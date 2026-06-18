@@ -6,6 +6,12 @@ namespace LiftIt.Interfaces
 {
     internal interface ILogowanieView
     {
+        string Email { get; set; }
+        string Password { get; set; }
+        void ShowSignInError(string message);
+        void RedirectHomePage();
 
+        event Action SignInUser;
+        event Action LogoutUser;
     }
 }

@@ -14,22 +14,6 @@ namespace LiftIt.Models
             return new MySqlConnection(_connectionString);
         }
 
-        // Przykładowa metoda testowa, którą wywołacie w Modelu
-        public async Task<bool> TestPolaczenia()
-        {
-            using var connection = GetConnection();
-            try
-            {
-                await connection.OpenAsync();
-                return connection.State == ConnectionState.Open;
-            }
-            catch (Exception ex)
-            {
-                // Tutaj możecie podejrzeć błąd w razie problemów
-                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
-                return false;
-            }
-        }
         public async Task<bool> SignUpUserInMySQL(Uzytkownik uzytkownik)
         {
             // Przygotowujemy zapytanie SQL zgodnie z kolumnami Twojej tabeli.
@@ -67,6 +51,53 @@ namespace LiftIt.Models
                 // błąd zostanie wypisany w oknie Output w Visual Studio
                 System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
                 return false;
+            }
+        }
+        public async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
+        {
+            // Pobieramy rekord użytkownika na podstawie adresu e-mail
+            string query = "SELECT id, login, email, password_hash FROM users WHERE email = @email";
+
+            try
+            {
+                using var connection = GetConnection();
+                await connection.OpenAsync();
+
+                using var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@email", email);
+
+                using var reader = await command.ExecuteReaderAsync();
+
+                // Jeśli znaleziono użytkownika o takim adresie e-mail
+                if (await reader.ReadAsync())
+                {
+                    // Pobieramy zahaszowane hasło z bazy danych
+                    string dbPasswordHash = reader.GetString("password_hash");
+
+                    // WERYFIKACJA HASŁA:
+                    // Jeśli w rejestracji zapisałeś czyste hasło, używasz zwykłego porównania (jak poniżej).
+                    // Jeśli używasz hashowania (np. BCrypt), w tym miejscu wywołujesz: BCrypt.Verify(password, dbPasswordHash)
+                    if (dbPasswordHash == password)
+                    {
+                        // Hasło się zgadza! Tworzymy i zwracamy obiekt użytkownika,
+                        // który później przekażemy do StateService.
+                        return new Uzytkownik
+                        {
+                            // Zakładam, że dodałeś właściwość id_uzytkownika do klasy Uzytkownik
+                            id = reader.GetInt32("id"), 
+                            login = reader.GetString("login"),
+                            email = reader.GetString("email")
+                        };
+                    }
+                }
+
+                // Jeśli e-mail nie istnieje lub hasło jest niepoprawne
+                return null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas logowania: {ex.Message}");
+                return null;
             }
         }
     }

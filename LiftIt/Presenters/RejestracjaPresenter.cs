@@ -1,14 +1,18 @@
-﻿namespace LiftIt.Presenters
+﻿using LiftIt.Models;
+
+namespace LiftIt.Presenters
 {
     internal class RejestracjaPresenter
     {
         private readonly Interfaces.IRejestracjaView _view;
         private readonly Models.DatabaseContext _dbContext;
+        private readonly Models.StateService _stateService;
 
-        public RejestracjaPresenter(Interfaces.IRejestracjaView view, Models.DatabaseContext dbContext)
+        public RejestracjaPresenter(Interfaces.IRejestracjaView view, Models.DatabaseContext dbContext, Models.StateService stateService)
         {
             _view = view;
             _dbContext = dbContext;
+            _stateService = stateService;
 
             _view.SignUpUser += OnUserSignUpRequested;
         }
@@ -17,7 +21,7 @@
         {
             if (_view.Password != _view.PasswordConfirm)
             {
-                // Tutaj warto byłoby mieć w interfejsie metodę np. _view.ShowError("Hasła się nie zgadzają");
+                _view.ShowSignUpError("Passwords do not match");
                 return;
             }
 
@@ -32,7 +36,9 @@
 
             if (sukces)
             {
-                // Poinformuj widok o sukcesie, np. przekieruj do logowania
+                _stateService.IsLoggedIn = true;
+                _stateService.CurrentUser = nowyUzytkownik;
+                _view.RedirectHomePage();
             }
         }
 
