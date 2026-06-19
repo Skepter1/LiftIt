@@ -22,6 +22,7 @@ namespace LiftIt
     		builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<DatabaseContext>();
+            builder.Services.AddSingleton<StateService>();
 
             return builder.Build();
         }

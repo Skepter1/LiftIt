@@ -10,6 +10,8 @@ namespace LiftIt.Interfaces
         string Email { get; set; }
         string Password { get; set; }
         string PasswordConfirm { get; set; }
+        void ShowSignUpError(string message);
+        void RedirectHomePage();
 
         event Action SignUpUser;
     }

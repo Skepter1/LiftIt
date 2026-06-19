@@ -2,6 +2,7 @@
     /* Kolory tła dark-mode */
     --body-bg: #121212; /* Najciemniejsze tło */
     --card-bg: #1e1e1e; /* Ciemny grafit na karty ćwiczeń/logowania */
+    --options-bg: #2e2e2e;
     /* Pola formularzy (Inputs) */
     --input-bg: #2a2a2a; /* Szarawe tło dla pól tekstowych */
     --input-border: #333333; /* Kolor ramki inputa */
@@ -127,6 +128,40 @@ input::placeholder {
     font-size: 1rem;
     transition: border-color 0.2s;
     width: 100%;
+}
+
+.accent-text {
+    color: var(--accent-color);
+}
+
+.error-message {
+    background-color: rgba(255, 77, 77, 0.1);
+    border: 1px solid var(--text-error);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+.error-text {
+    color: var(--text-error);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.settings-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--input-border);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+    .settings-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+.logout-btn {
+    color: var(--text-error) !important; /* Użyje czerwonego koloru z Twoich zmiennych */
+    font-weight: 600;
 }
 
 a, .btn-link {

@@ -1,41 +1,105 @@
 ﻿@page "/logowanie"
 @layout MainLayout
 @implements ILogowanieView
+@inject LiftIt.Models.StateService State
+@inject NavigationManager Navigation
 
 <div class="auth-container">
-    <div class="auth-card">
-        <h3>Welcome back!</h3>
-        <p class="subtitle">Sign In to track your workouts.</p>
+    @if (!State.IsLoggedIn)
+    {
+        <div class="auth-card">
+            <h3>Welcome back!</h3>
+            <p class="subtitle">Sign In to track your workouts.</p>
 
-        <form @onsubmit="OnZalogujClicked">
+            <form @onsubmit="OnSignInClicked">
 
-            <div class="input-group">
-                <label for="email">Adres E-mail</label>
-                <input id="email" type="email" class="form-control" placeholder="example@email.com" @bind="Email" required />
+                <div class="input-group">
+                    <label for="email">Adres E-mail</label>
+                    <input id="email" type="email" class="form-control" placeholder="example@email.com" @bind="Email" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Hasło</label>
+                    <input id="password" type="password" class="form-control" placeholder="••••••••" @bind="Password" required />
+                </div>
+
+                <button type="submit" class="btn-primary-custom">Sign In</button>
+            </form>
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message mt-2">
+                    <span class="error-text">@errorMessage</span>
+                </div>
+            }
+            <div class="register-redirect">
+                <span>Don't have an account? <a href="/rejestracja">Sign Up now!</a></span>
             </div>
 
-            <div class="input-group">
-                <label for="password">Hasło</label>
-                <input id="password" type="password" class="form-control" placeholder="••••••••" @bind="Password" required />
-            </div>
-
-            <button type="submit" class="btn-primary-custom">Sign In</button>
-        </form>
-
-        <div class="register-redirect">
-            <span>Don't have an account? <a href="/rejestracja">Sign in now!</a></span>
         </div>
-
-    </div>
+    } else
+    {
+        <div class="auth-card">
+            <div class="image-container">
+                <span class="bi bi-person-circle"></span>
+            </div>
+            <p>Welcome back, @StateService.CurrentUser.login!</p>
+            <div class="d-flex justify-content-start">
+                <p class="fw-bold">Settings</p>
+            </div>
+            <div class="settings-container">
+                @* <div class="settings-item">Email</div>
+                <div class="settings-item">Username</div>
+                <div class="settings-item">Password</div> *@
+                <div class="settings-item">Edit Profile</div>
+                <div class="settings-item">Theme</div>
+                <div class="settings-item">Terms & Conditions</div>
+                <div class="settings-item logout-btn" @onclick="OnLogoutUser">Logout</div>
+            </div>
+        </div>
+    }
+    
 </div>
 
 @code {
-    // Tutaj w przyszłości dodasz bindowanie pól i wywołanie Prezentera
+    [Inject] public Models.DatabaseContext DbContext { get; set; } // Wstrzykujemy model bazy danych
+    [Inject] public Models.StateService StateService { get; set; }
+
+    private LogowaniePresenter _presenter;
+    private string errorMessage = ""; // Domyślnie błąd jest pusty, więc się nie wyświetla
+
     public string Email { get; set; }
     public string Password { get; set; }
 
-    private void OnZalogujClicked()
+    public event Action SignInUser;
+    public event Action LogoutUser;
+
+    protected override void OnInitialized()
     {
-        // Tutaj wywołanie: _presenter.Zaloguj();
+        // Tworzymy prezenter i przekazujemy mu ten Widok (this) oraz Model (DbContext)
+        _presenter = new LogowaniePresenter(this, DbContext, StateService);
+    }
+
+    private void OnSignInClicked()
+    {
+        SignInUser?.Invoke();
+        StateHasChanged();
+
+    }
+
+    public void ShowSignInError(string message)
+    {
+        errorMessage = message; // Przypisujemy tekst przekazany z Prezentera
+        StateHasChanged(); // Wymuszamy na Blazorze odświeżenie HTML, aby pokazał spana
+    }
+
+    public void RedirectHomePage()
+    {
+        Navigation.NavigateTo("/", forceLoad: false);
+    }
+
+    private void OnLogoutUser()
+    {
+        LogoutUser?.Invoke();
+        StateHasChanged();
     }
 }
