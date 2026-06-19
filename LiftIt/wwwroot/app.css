@@ -159,10 +159,32 @@ input::placeholder {
         background-color: rgba(255, 255, 255, 0.05);
     }
 
+.settings-link {
+    text-decoration: none;
+    color: inherit;
+}
+
 .logout-btn {
     color: var(--text-error) !important; /* Użyje czerwonego koloru z Twoich zmiennych */
     font-weight: 600;
 }
+
+.bi-left-arrow {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    background-color: currentColor;
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/> </svg>'); -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+
+
+
+
+
 
 a, .btn-link {
     color: #006bb7;

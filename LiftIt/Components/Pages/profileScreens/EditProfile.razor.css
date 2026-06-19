@@ -1,0 +1,9 @@
+.edit-profile-card {
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-darker);
+    padding: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    width: 100%;
+}

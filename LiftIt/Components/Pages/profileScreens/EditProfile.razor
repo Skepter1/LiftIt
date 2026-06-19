@@ -1,0 +1,33 @@
+﻿@page "/editprofile"
+@layout MainLayout
+
+<div class="tab-with-topbar-container">
+    <div class="w-100 d-flex justify-content-between align-items-center header-container">
+        <NavLink href="logowanie">
+            <span class="bi bi-left-arrow accent-text"></span>
+        </NavLink>
+        <h3>Edit Profile</h3>
+        <NavLink href="logowanie">
+            <div class="accent-text">Done</div>
+        </NavLink>
+    </div>
+    <div class="auth-container">
+        <div class="edit-profile-card">
+            <form onsubmit="onEditProfileClicked">
+                <div class="description-container">Profile data</div>
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input id="name" class="form-control" placeholder="Your full name" @bind="Name" />
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input id="password" class="form-control" placeholder="New password" @bind="Password" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@code {
+    private string Name { get; set; }
+    private string Password { get; set; }
+}
