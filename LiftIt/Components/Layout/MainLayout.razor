@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject LiftIt.Models.StateService State
 
-<div class="main-layout-container">
+<div class="main-layout-container @(State.DarkTheme ? "" : "light-mode")">
 
     <main class="content-area">
         <article class="p-3">

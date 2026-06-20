@@ -50,9 +50,9 @@
                 <NavLink class="nav-link" href="editprofile">
                     <div class="settings-item" href="editprofile">Edit Profile</div>
                 </NavLink>
-                <div class="settings-item">Theme</div>
-                <NavLink class="nav-link" href="termsandconditions">
-                    <div class="settings-item">Terms & Conditions</div>
+                <div class="settings-item" @onclick="ToggleTheme">Theme</div>
+                <NavLink class="nav-link" href="aboutandsupport">
+                    <div class="settings-item">About & Support</div>
                 </NavLink>
                 <div class="settings-item logout-btn" @onclick="OnLogoutUser">Logout</div>
             </div>
@@ -102,5 +102,11 @@
     {
         LogoutUser?.Invoke();
         StateHasChanged();
+    }
+    private void ToggleTheme()
+    {
+        State.DarkTheme = !State.DarkTheme;
+        StateHasChanged();
+        Navigation.NavigateTo("/logowanie", forceLoad: false);
     }
 }
