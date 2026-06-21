@@ -4,21 +4,38 @@
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #121212;
+    /* JAWNIE przypisujemy tło ze zmiennej, która zmienia się w jasnym motywie */
+    background-color: var(--body-bg) !important;
 }
 
 .content-area {
     flex: 1;
     overflow-y: auto;
-    background-color: #121212;
+    background-color: var(--body-bg) !important;
     padding-bottom: 20px;
 }
 
 .bottom-nav {
-    height: calc(65px + env(safe-area-inset-bottom)); /* Wsparcie dla iPhone z FaceID */
+    /* Bezpieczny zapis wysokości bez calc, jeśli MAUI stawia opór: */
+    height: 65px;
     padding-bottom: env(safe-area-inset-bottom);
-    background-color: #1e1e1e;
-    border-top: 1px solid #2d2d2d;
+    /* Przypisujemy tło ze zmiennej */
+    background-color: var(--card-bg) !important;
+    border-top: 1px solid var(--input-border);
     width: 100%;
     z-index: 100;
 }
+
+    /* TUTAJ JEST KLUCZ DO NAPRAWY ROZJECHANEJ NAWIGACJI:
+   Musimy jawnie zresetować kolory tekstu linków wewnątrz stópki, 
+   żeby system nie narzucał domyślnego niebieskiego koloru HTML.
+*/
+    .bottom-nav a,
+    .bottom-nav .nav-item-link {
+        color: var(--text-darker) !important;
+    }
+
+        /* Kolor aktywnego elementu w zależności od wybranego motywu */
+        .bottom-nav .nav-item-link.active {
+            color: var(--accent-color) !important;
+        }

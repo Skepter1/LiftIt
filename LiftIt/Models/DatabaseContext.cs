@@ -100,5 +100,50 @@ namespace LiftIt.Models
                 return null;
             }
         }
+        public async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
+        {
+            // Sprawdzamy, które pola użytkownik faktycznie uzupełnił
+            bool zmieniamyLogin = !string.IsNullOrWhiteSpace(nowyLogin);
+            bool zmieniamyHaslo = !string.IsNullOrWhiteSpace(noweHaslo);
+            bool zmieniamyEmail = !string.IsNullOrWhiteSpace(nowyEmail);
+
+            // Jeśli wszystkie pola są puste, nie ma potrzeby pytać bazy danych
+            if (!zmieniamyLogin && !zmieniamyHaslo && !zmieniamyEmail) return true;
+
+            // Budujemy dynamiczną kwerendę UPDATE
+            string query = "UPDATE users SET ";
+            List<string> updates = new List<string>();
+
+            if (zmieniamyLogin) updates.Add("login = @login");
+            if (zmieniamyHaslo) updates.Add("password_hash = @password_hash");
+            if (zmieniamyEmail) updates.Add("email = @email");
+
+            // Łączymy elementy listy za pomocą przecinków
+            query += string.Join(", ", updates);
+            query += " WHERE id = @user_id";
+
+            try
+            {
+                using var connection = GetConnection();
+                await connection.OpenAsync();
+
+                using var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@user_id", userId);
+
+                // Dodajemy parametry tylko dla modyfikowanych kolumn
+                if (zmieniamyLogin) command.Parameters.AddWithValue("@login", nowyLogin);
+                if (zmieniamyHaslo) command.Parameters.AddWithValue("@password_hash", noweHaslo);
+                if (zmieniamyEmail) command.Parameters.AddWithValue("@email", nowyEmail);
+
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd aktualizacji profilu: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

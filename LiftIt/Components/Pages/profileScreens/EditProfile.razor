@@ -1,0 +1,74 @@
+﻿@page "/editprofile"
+@layout MainLayout
+@implements IEditProfileView
+
+<div class="tab-with-topbar-container">
+
+    <div class="w-100 d-flex justify-content-between align-items-center header-container px-3 py-2">
+        <NavLink href="logowanie" class="d-flex align-items-center">
+            <span class="bi bi-left-arrow accent-text"></span>
+        </NavLink>
+        <h3 class="m-0 page-title accent-text">Edit Profile</h3>
+        <div style="width: 2rem;"></div>
+    </div>
+
+    <div class="blank-screen-container">
+        <div class="edit-profile-card">
+
+            <h5 class="section-title mb-4">Profile Data</h5>
+
+            <form @onsubmit="OnEditProfileClicked">
+
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input id="name" class="form-control w-100" placeholder="Your full name" @bind="Name"/>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" class="form-control w-100" placeholder="Your new e-mail" @bind="Email" />
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-control w-100" placeholder="New password" @bind="Password" />
+                </div>
+                @if (!string.IsNullOrEmpty(successfulMessage))
+                {
+                    <div class="info-message mt-2">
+                        <span class="info-text">@successfulMessage</span>
+                    </div>
+                }
+                <button type="submit" class="btn-primary-custom mt-4">Done</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] public Models.DatabaseContext DbContext { get; set; } // Wstrzykujemy model bazy danych
+    [Inject] public Models.StateService StateService { get; set; }
+
+    private string successfulMessage = "";
+    
+    public string Name { get; set; }
+    public string Password { get; set; }
+    public string Email { get; set; }
+
+    public event Action ModificationRequested;
+    private EditProfilePresenter _presenter;
+
+    protected override void OnInitialized() {
+        _presenter = new EditProfilePresenter(this, DbContext, StateService);
+    }
+
+    private void OnEditProfileClicked() {
+        ModificationRequested?.Invoke();
+    }
+
+    public void SuccesfulModification(string message) {
+        successfulMessage = message; // Przypisujemy tekst przekazany z Prezentera
+        StateHasChanged(); // Wymuszamy na Blazorze odświeżenie HTML, aby pokazał spana
+    }
+}
