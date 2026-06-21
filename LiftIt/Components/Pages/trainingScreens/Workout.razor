@@ -1,0 +1,139 @@
+﻿@page "/workout"
+@page "/workout/{PlanId:int}"
+@layout MainLayout
+@implements LiftIt.Interfaces.IWorkoutView
+@inject LiftIt.Models.DatabaseContext DbContext
+@inject LiftIt.Models.StateService StateService
+
+<div class="tab-with-topbar-container">
+    <div class="w-100 d-flex justify-content-between align-items-center header-container px-3 py-2">
+        <NavLink href="trening" class="d-flex align-items-center text-decoration-none">
+            <span class="bi bi-left-arrow accent-text"></span>
+        </NavLink>
+        <h3 class="m-0 page-title">Live Workout</h3>
+        <div style="width: 2rem;"></div>
+    </div>
+
+    <div class="p-3">
+        @if (CurrentTrainingId == 0)
+        {
+            <div class="text-center mt-5">
+                <button class="btn-primary-custom w-100 mt-4" @onclick="() => StartSessionRequested?.Invoke()">Start Empty Session</button>
+            </div>
+        }
+        else
+        {
+            <div class="mb-4">
+                <span class="badge bg-success">Session Active</span>
+                <small class="text-muted ms-2">ID: @CurrentTrainingId</small>
+            </div>
+
+            @if (PlanLoadedItems != null && PlanLoadedItems.Count > 0)
+            {
+                @foreach (var item in PlanLoadedItems)
+                {
+                    <div class="card mb-3 p-3" style="background-color: var(--card-bg);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong style="color: var(--text-main);">@item.ExerciseName</strong>
+                            <button class="btn btn-sm btn-outline-warning" @onclick="() => ToggleExerciseSets(item.ExerciseId)">Toggle</button>
+                        </div>
+
+                        @if (visibleExerciseSets.Contains(item.ExerciseId))
+                        {
+                            <div class="mt-3 pt-3" style="border-top: 1px solid var(--input-border);">
+                                <div class="d-flex gap-2">
+                                    <input class="form-control text-center" type="number" placeholder="Set" @bind="perExerciseSetNumber[item.ExerciseId]" />
+                                    <input class="form-control text-center" type="number" placeholder="kg" @bind="perExerciseWeight[item.ExerciseId]" />
+                                    <input class="form-control text-center" type="number" placeholder="Reps" @bind="perExerciseReps[item.ExerciseId]" />
+                                    <button class="btn btn-success" @onclick="() => TriggerAddSet(item.ExerciseId)">Add</button>
+                                </div>
+
+                                @if (ExerciseSets.TryGetValue(item.ExerciseId, out var list) && list.Count > 0)
+                                {
+                                    <ul class="list-group list-group-flush mt-2">
+                                        @foreach (var s in list)
+                                        {
+                                            <li class="list-group-item" style="background: transparent; color: var(--text-main);">
+                                                Set @s.SetNumber: @s.Weight kg x @s.Reps
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
+            <div class="mt-4 p-3" style="background-color: var(--options-bg); border-radius: 12px;">
+                <label class="text-muted mb-2">Workout Notes</label>
+                <textarea class="form-control mb-3" @bind="EndNotes"></textarea>
+                <button class="btn btn-danger w-100" @onclick="() => EndSessionRequested?.Invoke()">FINISH WORKOUT</button>
+            </div>
+        }
+        <p class="mt-3 text-info text-center">@statusMessage</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int PlanId { get; set; }
+
+    private LiftIt.Presenters.WorkoutPresenter _presenter;
+    private string statusMessage = "";
+
+    // Lokalne zmienne UI (pola input przed wysłaniem)
+    private HashSet<int> visibleExerciseSets = new();
+    private Dictionary<int, int> perExerciseSetNumber = new();
+    private Dictionary<int, decimal> perExerciseWeight = new();
+    private Dictionary<int, int> perExerciseReps = new();
+
+    // Implementacja IWorkoutView
+    public int CurrentTrainingId { get; set; } = 0;
+    public string EndNotes { get; set; } = "";
+    public List<LiftIt.Models.ExercisesInPlan> PlanLoadedItems { get; set; } = new();
+    public Dictionary<int, List<LiftIt.Models.SetRecord>> ExerciseSets { get; set; } = new();
+
+    public event Action StartSessionRequested;
+    public event Action EndSessionRequested;
+    public event Action<int, int, decimal, int> AddSetRequested;
+    public event Action<int> LoadSetsRequested;
+
+    protected override void OnInitialized()
+    {
+        _presenter = new LiftIt.Presenters.WorkoutPresenter(this, DbContext, StateService);
+    }
+
+    private void ToggleExerciseSets(int exerciseId)
+    {
+        if (visibleExerciseSets.Contains(exerciseId)) visibleExerciseSets.Remove(exerciseId);
+        else
+        {
+            visibleExerciseSets.Add(exerciseId);
+            if (!perExerciseSetNumber.ContainsKey(exerciseId)) perExerciseSetNumber[exerciseId] = 1;
+            if (!perExerciseWeight.ContainsKey(exerciseId)) perExerciseWeight[exerciseId] = 0m;
+            if (!perExerciseReps.ContainsKey(exerciseId)) perExerciseReps[exerciseId] = 8;
+            if (!ExerciseSets.ContainsKey(exerciseId)) ExerciseSets[exerciseId] = new();
+
+            LoadSetsRequested?.Invoke(exerciseId);
+        }
+    }
+
+    private void TriggerAddSet(int exerciseId)
+    {
+        int setNum = perExerciseSetNumber.GetValueOrDefault(exerciseId, 1);
+        decimal w = perExerciseWeight.GetValueOrDefault(exerciseId, 0m);
+        int r = perExerciseReps.GetValueOrDefault(exerciseId, 8);
+
+        AddSetRequested?.Invoke(exerciseId, setNum, w, r);
+        perExerciseSetNumber[exerciseId]++; // Zwiększ numer serii w UI po udanym dodaniu
+    }
+
+    public void ShowMessage(string msg)
+    {
+        statusMessage = msg;
+        RefreshUI();
+    }
+
+    public void RefreshUI() => StateHasChanged();
+}
