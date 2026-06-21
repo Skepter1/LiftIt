@@ -4,10 +4,9 @@ using System.Text;
 
 namespace LiftIt.Models
 {
-    internal class Cwiczenie
+    public class BodyPart
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-
     }
 }
