@@ -42,17 +42,18 @@
             <div class="image-container">
                 <span class="bi bi-person-circle"></span>
             </div>
-            <p>Welcome back, @StateService.CurrentUser.login!</p>
+            <p>Welcome back, <span class="accent-text">@StateService.CurrentUser.login</span>!</p>
             <div class="d-flex justify-content-start">
                 <p class="fw-bold">Settings</p>
             </div>
             <div class="settings-container">
-                @* <div class="settings-item">Email</div>
-                <div class="settings-item">Username</div>
-                <div class="settings-item">Password</div> *@
-                <div class="settings-item">Edit Profile</div>
-                <div class="settings-item">Theme</div>
-                <div class="settings-item">Terms & Conditions</div>
+                <NavLink class="nav-link" href="editprofile">
+                    <div class="settings-item" href="editprofile">Edit Profile</div>
+                </NavLink>
+                <div class="settings-item" @onclick="ToggleTheme">Theme</div>
+                <NavLink class="nav-link" href="aboutandsupport">
+                    <div class="settings-item">About & Support</div>
+                </NavLink>
                 <div class="settings-item logout-btn" @onclick="OnLogoutUser">Logout</div>
             </div>
         </div>
@@ -101,5 +102,11 @@
     {
         LogoutUser?.Invoke();
         StateHasChanged();
+    }
+    private void ToggleTheme()
+    {
+        State.DarkTheme = !State.DarkTheme;
+        StateHasChanged();
+        Navigation.NavigateTo("/logowanie", forceLoad: false);
     }
 }

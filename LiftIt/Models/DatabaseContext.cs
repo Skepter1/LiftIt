@@ -8,8 +8,8 @@ namespace LiftIt.Models
 {
     public class DatabaseContext
     {
-        // 127.0.0.1 dzia³a TYLKO na Windows.
-        // Jeœli odpalisz emulator Androida, u¿yj adresu: 10.0.2.2 (to specjalny alias w emulatorze wskazuj¹cy na Twój PC)
+        // 127.0.0.1 dziaï¿½a TYLKO na Windows.
+        // Jeï¿½li odpalisz emulator Androida, uï¿½yj adresu: 10.0.2.2 (to specjalny alias w emulatorze wskazujï¿½cy na Twï¿½j PC)
         private readonly string _connectionString = "Server=127.0.0.1;Port=3306;Database=liftit;User ID=root;Password=;";
 
         public MySqlConnection GetConnection()
@@ -17,7 +17,7 @@ namespace LiftIt.Models
             return new MySqlConnection(_connectionString);
         }
 
-        // Przyk³adowa metoda testowa, któr¹ wywo³acie w Modelu
+        // Przykï¿½adowa metoda testowa, ktï¿½rï¿½ wywoï¿½acie w Modelu
         public async Task<bool> TestPolaczenia()
         {
             using var connection = GetConnection();
@@ -28,8 +28,8 @@ namespace LiftIt.Models
             }
             catch (Exception ex)
             {
-                // Tutaj mo¿ecie podejrzeæ b³¹d w razie problemów
-                System.Diagnostics.Debug.WriteLine($"B³¹d bazy: {ex.Message}");
+                // Tutaj moï¿½ecie podejrzeï¿½ bï¿½ï¿½d w razie problemï¿½w
+                System.Diagnostics.Debug.WriteLine($"Bï¿½ï¿½d bazy: {ex.Message}");
                 return false;
             }
         }
@@ -47,7 +47,7 @@ namespace LiftIt.Models
                 command.Parameters.AddWithValue("@login", uzytkownik.login);
                 command.Parameters.AddWithValue("@email", uzytkownik.email);
 
-                // UWAGA: tu przechowujesz has³o w polu password_hash — zast¹p hashowaniem w przysz³oœci
+                // UWAGA: tu przechowujesz hasï¿½o w polu password_hash ï¿½ zastï¿½p hashowaniem w przyszï¿½oï¿½ci
                 command.Parameters.AddWithValue("@password_hash", uzytkownik.password);
                 command.Parameters.AddWithValue("@date_of_registration", DateTime.Now);
 
@@ -56,7 +56,7 @@ namespace LiftIt.Models
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"B³¹d podczas rejestracji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Bï¿½ï¿½d podczas rejestracji: {ex.Message}");
                 return false;
             }
         }
@@ -79,8 +79,8 @@ namespace LiftIt.Models
                 {
                     string dbPasswordHash = reader.IsDBNull("password_hash") ? "" : reader.GetString("password_hash");
 
-                    // Jeœli has³a s¹ przechowywane jawnie — porównujemy bezpoœrednio.
-                    // Jeœli w przysz³oœci dodasz hash => tutaj u¿yj BCrypt.Verify itp.
+                    // Jeï¿½li hasï¿½a sï¿½ przechowywane jawnie ï¿½ porï¿½wnujemy bezpoï¿½rednio.
+                    // Jeï¿½li w przyszï¿½oï¿½ci dodasz hash => tutaj uï¿½yj BCrypt.Verify itp.
                     if (dbPasswordHash == password)
                     {
                         return new Uzytkownik
@@ -97,7 +97,7 @@ namespace LiftIt.Models
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"B³¹d podczas logowania: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Bï¿½ï¿½d podczas logowania: {ex.Message}");
                 return null;
             }
         }
@@ -324,7 +324,7 @@ namespace LiftIt.Models
             return list;
         }
 
-        // --- metody sesji treningowej i setów ---
+        // --- metody sesji treningowej i setï¿½w ---
         public async Task<int> StartTrainingSessionAsync(int userId)
         {
             const string insert = "INSERT INTO trainings_history (user_id, start_time) VALUES (@uid, CURRENT_TIMESTAMP()); SELECT LAST_INSERT_ID();";
@@ -359,7 +359,7 @@ namespace LiftIt.Models
 
         public async Task<int> AddSetAsync(int trainingId, int exerciseId, int setNumber, decimal weight, int reps)
         {
-            // Wrapper — u¿ywamy bezpiecznego upsertu (nadpisze istniej¹c¹ seriê o tym samym training+exercise+setNumber)
+            // Wrapper ï¿½ uï¿½ywamy bezpiecznego upsertu (nadpisze istniejï¿½cï¿½ seriï¿½ o tym samym training+exercise+setNumber)
             return await UpsertSetAsync(trainingId, exerciseId, setNumber, weight, reps);
         }
 
@@ -397,7 +397,7 @@ namespace LiftIt.Models
                 using var conn = GetConnection();
                 await conn.OpenAsync();
 
-                // SprawdŸ czy istnieje taki wiersz
+                // Sprawdï¿½ czy istnieje taki wiersz
                 const string select = "SELECT id FROM sets WHERE training_id = @t AND exercise_id = @e AND set_number = @sn";
                 using (var selCmd = new MySqlCommand(select, conn))
                 {
@@ -408,7 +408,7 @@ namespace LiftIt.Models
                     var existing = await selCmd.ExecuteScalarAsync();
                     if (existing != null && existing != DBNull.Value)
                     {
-                        // aktualizuj istniej¹c¹ seriê
+                        // aktualizuj istniejï¿½cï¿½ seriï¿½
                         const string update = "UPDATE sets SET weight = @w, reps = @r WHERE id = @id";
                         using var updCmd = new MySqlCommand(update, conn);
                         updCmd.Parameters.AddWithValue("@w", weight);
@@ -419,7 +419,7 @@ namespace LiftIt.Models
                     }
                     else
                     {
-                        // wstaw now¹
+                        // wstaw nowï¿½
                         const string insert = "INSERT INTO sets (training_id, exercise_id, set_number, weight, reps) VALUES (@t,@e,@sn,@w,@r); SELECT LAST_INSERT_ID();";
                         using var insCmd = new MySqlCommand(insert, conn);
                         insCmd.Parameters.AddWithValue("@t", trainingId);
@@ -438,5 +438,50 @@ namespace LiftIt.Models
                 return 0;
             }
         }
+        public async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
+        {
+            // Sprawdzamy, ktÃ³re pola uÅ¼ytkownik faktycznie uzupeÅ‚niÅ‚
+            bool zmieniamyLogin = !string.IsNullOrWhiteSpace(nowyLogin);
+            bool zmieniamyHaslo = !string.IsNullOrWhiteSpace(noweHaslo);
+            bool zmieniamyEmail = !string.IsNullOrWhiteSpace(nowyEmail);
+
+            // JeÅ›li wszystkie pola sÄ… puste, nie ma potrzeby pytaÄ‡ bazy danych
+            if (!zmieniamyLogin && !zmieniamyHaslo && !zmieniamyEmail) return true;
+
+            // Budujemy dynamicznÄ… kwerendÄ™ UPDATE
+            string query = "UPDATE users SET ";
+            List<string> updates = new List<string>();
+
+            if (zmieniamyLogin) updates.Add("login = @login");
+            if (zmieniamyHaslo) updates.Add("password_hash = @password_hash");
+            if (zmieniamyEmail) updates.Add("email = @email");
+
+            // ÅÄ…czymy elementy listy za pomocÄ… przecinkÃ³w
+            query += string.Join(", ", updates);
+            query += " WHERE id = @user_id";
+
+            try
+            {
+                using var connection = GetConnection();
+                await connection.OpenAsync();
+
+                using var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@user_id", userId);
+
+                // Dodajemy parametry tylko dla modyfikowanych kolumn
+                if (zmieniamyLogin) command.Parameters.AddWithValue("@login", nowyLogin);
+                if (zmieniamyHaslo) command.Parameters.AddWithValue("@password_hash", noweHaslo);
+                if (zmieniamyEmail) command.Parameters.AddWithValue("@email", nowyEmail);
+
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"BÅ‚Ä…d aktualizacji profilu: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

@@ -1,0 +1,158 @@
+/* Kontener centrujący i pilnujący szerokości na smartfonie */
+.blank-screen-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 85vh;
+    padding: 20px;
+    background-color: var(--body-bg);
+}
+
+.support-wrapper {
+    width: 100%;
+    max-width: 450px; /* Dostosowanie do szerokości kart auth */
+}
+
+/* Wspólny styl dla kart na tym ekranie */
+.support-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    color: var(--text-main);
+}
+
+/* Specyficzne style dla karty górnej (Info) */
+.info-card {
+    border: 1px solid var(--input-border);
+}
+
+.app-logo-placeholder {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 204, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* W jasnym motywie zmieniamy tło logo na delikatny niebieski */
+.light-mode .app-logo-placeholder {
+    background-color: rgba(0, 107, 183, 0.1);
+}
+
+.logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--accent-color);
+}
+
+.app-name {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+}
+
+.app-version {
+    font-size: 0.8rem;
+    color: var(--text-darker);
+    margin-bottom: 15px;
+}
+
+.app-description {
+    font-size: 0.9rem;
+    color: var(--text-darker);
+    line-height: 1.5;
+}
+
+.authors-box {
+    border-top: 1px solid var(--input-border);
+    padding-top: 12px;
+}
+
+.authors-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.authors-names {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+/* Styl nagłówków sekcji */
+.section-heading {
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1rem;
+    padding-left: 4px;
+}
+
+/* Klikalne karty akcji (FAQ / Contact) */
+.action-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    border: 1px solid var(--input-border);
+    transition: transform 0.15s, background-color 0.2s;
+}
+
+    .action-card:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .action-card:active {
+        transform: scale(0.98);
+    }
+
+.action-card-content {
+    display: flex;
+    align-items: center;
+}
+
+.action-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--accent-color);
+    margin-right: 16px;
+}
+
+.action-text h6 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.action-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-darker);
+}
+
+/* Prawa autorskie na dole */
+.copyright-text {
+    font-size: 0.75rem;
+    color: var(--text-darker);
+}
+
+/* Ikona strzałki w prawo (Chevron) oparta na masce CSS – dopasuje się do koloru tekstu */
+.bi-chevron-right {
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    background-color: var(--text-darker);
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
