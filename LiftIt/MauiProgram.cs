@@ -16,9 +16,10 @@ namespace LiftIt
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddTransient<HomePresenter>();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<DatabaseContext>();

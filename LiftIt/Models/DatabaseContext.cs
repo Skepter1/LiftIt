@@ -438,6 +438,84 @@ namespace LiftIt.Models
                 return 0;
             }
         }
+
+        public async Task<List<TrainingHistoryDto>> GetUserTrainingHistoryAsync(int userId)
+        {
+            var trainingList = new List<TrainingHistoryDto>();
+
+            // 1. Pobieramy połączenie z bazy danych (użyj metody, którą masz już zdefiniowaną w DatabaseContext)
+            using (var connection = GetConnection()) // Dostosuj nazwę metody pobierającej połączenie
+            {
+                await connection.OpenAsync();
+
+                // 2. Najpierw pobieramy listę treningów użytkownika (od najnowszego - DESC)
+                var trainingQuery = "SELECT id, start_time, end_time, notes FROM trainings_history WHERE user_id = @UserId ORDER BY start_time DESC, id DESC";
+
+                using (var cmd = new MySqlCommand(trainingQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            trainingList.Add(new TrainingHistoryDto
+                            {
+                                Id = reader.GetInt32("id"),
+                                TrainingDate = reader.IsDBNull(reader.GetOrdinal("start_time")) ? DateTime.Now : reader.GetDateTime("start_time"),
+                                Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? string.Empty : reader.GetString("notes"),
+                                Exercises = new List<ExerciseSummaryDto>()
+                            });
+                        }
+                    }
+                }
+
+                // 3. Dla każdego treningu pobieramy wykonane ćwiczenia wraz z seriami
+                foreach (var training in trainingList)
+                {
+                    var setsQuery = @"
+                SELECT e.name AS ExerciseName, s.set_number, s.weight, s.reps 
+                FROM sets s
+                JOIN exercises e ON s.exercise_id = e.id
+                WHERE s.training_id = @TrainingId
+                ORDER BY s.exercise_id, s.set_number";
+
+                    using (var cmd = new MySqlCommand(setsQuery, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@TrainingId", training.Id);
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            // Słownik pomocniczy do grupowania serii po nazwie ćwiczenia
+                            var exerciseDict = new Dictionary<string, ExerciseSummaryDto>();
+
+                            while (await reader.ReadAsync())
+                            {
+                                var exName = reader.GetString("ExerciseName");
+
+                                if (!exerciseDict.ContainsKey(exName))
+                                {
+                                    exerciseDict[exName] = new ExerciseSummaryDto
+                                    {
+                                        ExerciseName = exName,
+                                        Sets = new List<SetDto>()
+                                    };
+                                    training.Exercises.Add(exerciseDict[exName]);
+                                }
+
+                                exerciseDict[exName].Sets.Add(new SetDto
+                                {
+                                    SetNumber = reader.GetInt32("set_number"),
+                                    // Zmiana z GetDouble na bezpieczne rzutowanie z GetDecimal
+                                    Weight = (double)reader.GetDecimal("weight"),
+                                    Reps = reader.GetInt32("reps")
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            return trainingList;
+        }
         public async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
         {
             // Sprawdzamy, które pola użytkownik faktycznie uzupełnił
