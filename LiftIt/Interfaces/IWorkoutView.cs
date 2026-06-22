@@ -6,8 +6,8 @@ namespace LiftIt.Interfaces
 {
     public interface IWorkoutView
     {
+        int PlanId { get; set; } // Z adresu URL
         int CurrentTrainingId { get; set; }
-        int PlanId { get; set; } // Pozwoli Prezenterowi sprawdzić, czy użytkownik wybrał jakiś plan
         string EndNotes { get; set; }
         List<ExercisesInPlan> PlanLoadedItems { get; set; }
         Dictionary<int, List<SetRecord>> ExerciseSets { get; set; }
