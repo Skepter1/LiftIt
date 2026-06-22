@@ -1,0 +1,111 @@
+/* Główny kontener strony */
+.home-container {
+    padding: 24px;
+    background-color: #121212; /* Identyczne ciemne tło jak na screenie */
+    min-height: 100vh;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Nagłówek strony */
+.main-header h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.main-header p {
+    color: #aaaaaa;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+/* Kontener na listę treningów */
+.training-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Pojedyncza karta treningu - stylizowana na panel logowania */
+.training-card {
+    background-color: #1e1e1e; /* Grafitowy panel z Twojego screena */
+    border-radius: 12px; /* Identyczne zaokrąglenia */
+    padding: 20px;
+    border: 1px solid #2d2d2d; /* Subtelna ramka, żeby panel odcinał się od tła */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Nagłówek karty treningowej */
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2d2d2d;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+    .card-top h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #ffcc00; /* Żółty akcent nawiązujący do przycisku SIGN IN */
+    }
+
+    .card-top .date {
+        margin: 0;
+        font-size: 12px;
+        color: #888888;
+        font-weight: 500;
+    }
+
+/* Grupa ćwiczenia */
+.exercise-group {
+    margin-bottom: 16px;
+}
+
+    .exercise-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .exercise-group h5 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+/* Lista serii w treningu */
+.sets-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.set-item {
+    background-color: #262626; /* Ciemniejsza sekcja dla serii */
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    color: #dddddd;
+    border-left: 3px solid #ffcc00; /* Żółty pasek z boku dla dekoracji */
+}
+
+    .set-item span strong {
+        color: #ffffff;
+    }
+
+/* Komunikaty stanu (ładowanie/pusto) */
+.status-text {
+    color: #aaaaaa;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 15px;
+}

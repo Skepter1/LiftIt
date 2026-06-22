@@ -66,6 +66,9 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
+	<ItemGroup>
+	</ItemGroup>
+	
     <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.71" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.71" />
