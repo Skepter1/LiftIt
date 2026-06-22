@@ -6,14 +6,22 @@ namespace LiftIt.Interfaces
 {
     public interface IWorkoutView
     {
-        int PlanId { get; set; } // Z adresu URL
+        int PlanId { get; set; }
         int CurrentTrainingId { get; set; }
         string EndNotes { get; set; }
+        string FormattedTimerText { get; set; }
         List<ExercisesInPlan> PlanLoadedItems { get; set; }
         Dictionary<int, List<SetRecord>> ExerciseSets { get; set; }
 
+        List<Exercise> AvailableExercises { get; set; }
+
+
         void ShowMessage(string message);
         void RefreshUI();
+
+        // NOWE: Zdarzenia cyklu życia i dodawania ćwiczeń
+        event Action InitializeDataRequested;
+        event Action<int> AddExerciseToSessionRequested;
 
         event Action StartSessionRequested;
         event Action EndSessionRequested;

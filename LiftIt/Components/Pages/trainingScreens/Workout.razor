@@ -25,17 +25,23 @@
         }
         else
         {
-            <div class="mb-4">
-                <span class="badge bg-success">Sesja Aktywna</span>
-                <small class="text-muted ms-2">ID: @CurrentTrainingId</small>
+            <div class="mb-4 d-flex justify-content-between align-items-center p-3" style="background-color: var(--card-bg); border-radius: 12px;">
+                <div>
+                    <span class="badge bg-success mb-1">Sesja Aktywna</span>
+                    <div class="small" style="color: var(--text-darker);">ID: @CurrentTrainingId</div>
+                </div>
+                <div class="text-end">
+                    <div class="main-text small uppercase fw-bold" style="letter-spacing: 0.5px;">Duration</div>
+                    <div class="accent-text fw-bold" style="font-size: 1.3rem; font-family: monospace;">@FormattedTimerText</div>
+                </div>
             </div>
 
             @if (PlanLoadedItems != null && PlanLoadedItems.Count > 0)
             {
-                <h5 style="color: var(--text-main);">Ćwiczenia z planu</h5>
+                <h5 style="color: var(--text-main); margin-left: 4px;" class="mb-3">Twoje ćwiczenia</h5>
                 @foreach (var item in PlanLoadedItems)
                 {
-                    <div class="card mb-3 p-3" style="background-color: var(--card-bg); border: none;">
+                    <div class="card mb-3 p-3" style="background-color: var(--card-bg); border: none; border-radius: 12px;">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <strong style="color: var(--text-main); font-size: 1.1rem;">@item.ExerciseName</strong>
@@ -50,9 +56,12 @@
                         {
                             <div class="mt-3 pt-3" style="border-top: 1px solid var(--input-border);">
                                 <div class="d-flex gap-2 align-items-end">
-                                    <div class="flex-grow-1">
+                                    <div style="width: 70px;">
                                         <label class="small text-muted">Seria</label>
-                                        <input class="form-control text-center p-2" type="number" @bind="perExerciseSetNumber[item.ExerciseId]" min="1" />
+                                        <input class="form-control text-center p-2 text-muted fw-bold"
+                                               style="background-color: rgba(0,0,0,0.2); border-color: var(--input-border);"
+                                               value="@GetNextSetNumber(item.ExerciseId)"
+                                               readonly />
                                     </div>
                                     <div class="flex-grow-1">
                                         <label class="small text-muted">kg</label>
@@ -88,15 +97,37 @@
                     </div>
                 }
             }
-            else
-            {
-                <div class="text-center p-4 mb-4" style="border: 1px dashed var(--input-border); border-radius: 8px;">
-                    <p class="text-muted m-0">Brak załadowanych ćwiczeń z planu. Możesz dodać ćwiczenia ręcznie lub uruchomić plan z zakładki Rutyny.</p>
-                </div>
-            }
+
+            <div class="mt-4 mb-4">
+                @if (!showAddExercisePanel)
+                {
+                    <button class="btn btn-outline-primary w-100 py-3 d-flex justify-content-center align-items-center"
+                            style="border-radius: 12px; border-style: dashed; border-width: 2px; color: var(--accent-color); border-color: var(--accent-color);"
+                            @onclick="() => showAddExercisePanel = true">
+                        + Dodaj ćwiczenie do sesji
+                    </button>
+                }
+                else
+                {
+                    <div class="card p-3" style="background-color: var(--options-bg); border-radius: 12px; border: 1px solid var(--input-border);">
+                        <label class="text-muted small mb-2">Wybierz ćwiczenie z listy</label>
+                        <select class="form-control mb-3" @bind="selectedNewExerciseId" style="background-color: var(--input-bg); color: var(--text-main);">
+                            <option value="0">-- Wybierz --</option>
+                            @foreach (var ex in AvailableExercises)
+                            {
+                                <option value="@ex.Id">@ex.Name (@ex.BodyPartName)</option>
+                            }
+                        </select>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary w-50" @onclick="() => showAddExercisePanel = false">Anuluj</button>
+                            <button class="btn btn-success w-50" @onclick="ConfirmAddExercise">Dodaj</button>
+                        </div>
+                    </div>
+                }
+            </div>
 
             <div class="mt-4 p-3" style="background-color: var(--options-bg); border-radius: 12px;">
-                <label class="text-muted mb-2">Notatka końcowa</label>
+                <label class="mb-2" style="color: var(--text-darker);">Notatka końcowa</label>
                 <textarea class="form-control mb-3" @bind="EndNotes"></textarea>
                 <button class="btn btn-danger w-100 py-2" style="font-weight: bold;" @onclick="() => EndSessionRequested?.Invoke()">ZAKOŃCZ SESJĘ</button>
             </div>
@@ -109,11 +140,12 @@
     private LiftIt.Presenters.WorkoutPresenter _presenter;
     private string statusMessage = "";
 
-    // Słowniki wprowadzania danych tymczasowych (UI State) [cite: 33, 34]
     private HashSet<int> visibleExerciseSets = new();
-    private Dictionary<int, int> perExerciseSetNumber = new();
     private Dictionary<int, decimal> perExerciseWeight = new();
     private Dictionary<int, int> perExerciseReps = new();
+
+    private bool showAddExercisePanel = false;
+    private int selectedNewExerciseId = 0;
 
     [Parameter]
     public int PlanId { get; set; }
@@ -122,7 +154,13 @@
     public string EndNotes { get; set; } = "";
     public List<LiftIt.Models.ExercisesInPlan> PlanLoadedItems { get; set; } = new();
     public Dictionary<int, List<LiftIt.Models.SetRecord>> ExerciseSets { get; set; } = new();
+    public List<LiftIt.Models.Exercise> AvailableExercises { get; set; } = new();
 
+    // Implementacja nowego pola stopera z interfejsu
+    public string FormattedTimerText { get; set; } = "00:00:00";
+
+    public event Action InitializeDataRequested;
+    public event Action<int> AddExerciseToSessionRequested;
     public event Action StartSessionRequested;
     public event Action EndSessionRequested;
     public event Action<int, int, decimal, int> AddSetRequested;
@@ -131,6 +169,27 @@
     protected override void OnInitialized()
     {
         _presenter = new LiftIt.Presenters.WorkoutPresenter(this, DbContext, StateService);
+        InitializeDataRequested?.Invoke();
+    }
+
+    // AUTOMATYCZNE WYLICZANIE KOLEJNEGO NUMERU SERII
+    private int GetNextSetNumber(int exerciseId)
+    {
+        if (ExerciseSets.TryGetValue(exerciseId, out var list) && list.Count > 0)
+        {
+            return list.Max(s => s.SetNumber) + 1; // Zwraca najwyższy numer serii + 1
+        }
+        return 1; // Jeśli brak serii, zaczynamy od 1
+    }
+
+    private void ConfirmAddExercise()
+    {
+        if (selectedNewExerciseId > 0)
+        {
+            AddExerciseToSessionRequested?.Invoke(selectedNewExerciseId);
+            showAddExercisePanel = false;
+            selectedNewExerciseId = 0;
+        }
     }
 
     private void ToggleExerciseSets(int exerciseId)
@@ -139,7 +198,6 @@
         else
         {
             visibleExerciseSets.Add(exerciseId);
-            if (!perExerciseSetNumber.ContainsKey(exerciseId)) perExerciseSetNumber[exerciseId] = 1;
             if (!perExerciseWeight.ContainsKey(exerciseId)) perExerciseWeight[exerciseId] = 0m;
             if (!perExerciseReps.ContainsKey(exerciseId)) perExerciseReps[exerciseId] = 8;
             if (!ExerciseSets.ContainsKey(exerciseId)) ExerciseSets[exerciseId] = new();
@@ -150,12 +208,12 @@
 
     private void TriggerAddSet(int exerciseId)
     {
-        int setNum = perExerciseSetNumber.GetValueOrDefault(exerciseId, 1);
+        // Pobieramy automatycznie wyliczony numer serii zamiast brać go ze słownika UI
+        int autoSetNum = GetNextSetNumber(exerciseId);
         decimal w = perExerciseWeight.GetValueOrDefault(exerciseId, 0m);
         int r = perExerciseReps.GetValueOrDefault(exerciseId, 8);
 
-        AddSetRequested?.Invoke(exerciseId, setNum, w, r);
-        perExerciseSetNumber[exerciseId]++; // Zwiększanie serii z UI po dodaniu [cite: 61]
+        AddSetRequested?.Invoke(exerciseId, autoSetNum, w, r);
     }
 
     public void ShowMessage(string msg)
@@ -164,5 +222,10 @@
         RefreshUI();
     }
 
-    public void RefreshUI() => StateHasChanged();
+    public void RefreshUI()
+    {
+        // Bardzo ważne: Ponieważ timer działa w tle na osobnym wątku,
+        // musimy bezpiecznie wywołać przerysowanie ekranu poprzez InvokeAsync
+        InvokeAsync(StateHasChanged);
+    }
 }

@@ -2,7 +2,9 @@ using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace LiftIt.Models
 {
@@ -36,7 +38,7 @@ namespace LiftIt.Models
         public async Task<bool> SignUpUserInMySQL(Uzytkownik uzytkownik)
         {
             string query = @"INSERT INTO users (login, email, password_hash, date_of_registration) 
-                             VALUES (@login, @email, @password_hash, @date_of_registration)";
+                             VALUES (@login, @email, SHA2(@password_hash, 256), @date_of_registration)";
 
             try
             {
@@ -47,7 +49,7 @@ namespace LiftIt.Models
                 command.Parameters.AddWithValue("@login", uzytkownik.login);
                 command.Parameters.AddWithValue("@email", uzytkownik.email);
 
-                // UWAGA: tu przechowujesz hasło w polu password_hash — zastąp hashowaniem w przyszłości
+                // UWAGA: tu przechowujesz has�o w polu password_hash � zast�p hashowaniem w przysz�o�ci
                 command.Parameters.AddWithValue("@password_hash", uzytkownik.password);
                 command.Parameters.AddWithValue("@date_of_registration", DateTime.Now);
 
@@ -56,7 +58,7 @@ namespace LiftIt.Models
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"B��d podczas rejestracji: {ex.Message}");
                 return false;
             }
         }
@@ -77,11 +79,14 @@ namespace LiftIt.Models
 
                 if (await reader.ReadAsync())
                 {
-                    string dbPasswordHash = reader.IsDBNull("password_hash") ? "" : reader.GetString("password_hash");
+                    string dbPasswordHash = reader.IsDBNull("password_hash")
+                        ? ""
+                        : reader.GetString("password_hash");
 
-                    // Jeśli hasła są przechowywane jawnie — porównujemy bezpośrednio.
-                    // Jeśli w przyszłości dodasz hash => tutaj użyj BCrypt.Verify itp.
-                    if (dbPasswordHash == password)
+                    // 🔥 HASH z C# (SHA256 = MySQL SHA2(..., 256))
+                    string inputHash = Sha256(password);
+
+                    if (dbPasswordHash == inputHash)
                     {
                         return new Uzytkownik
                         {
@@ -100,6 +105,19 @@ namespace LiftIt.Models
                 System.Diagnostics.Debug.WriteLine($"Błąd podczas logowania: {ex.Message}");
                 return null;
             }
+        }
+
+
+        public static string Sha256(string input)
+        {
+            using var sha = SHA256.Create();
+            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var sb = new StringBuilder();
+            foreach (var b in bytes)
+                sb.Append(b.ToString("x2"));
+
+            return sb.ToString();
         }
 
         // ---- Exercises / BodyParts ----
@@ -248,7 +266,7 @@ namespace LiftIt.Models
 
         public async Task AddExerciseToPlanAsync(int planId, int exerciseId, int order)
         {
-            const string insert = "INSERT INTO exercises_in_plan (plan_id, exercies_id, excercise_order) VALUES (@p, @e, @o)";
+            const string insert = "INSERT INTO exercises_in_plan (plan_id, exercise_id, exercise_order) VALUES (@p, @e, @o)";
             try
             {
                 using var conn = GetConnection();
@@ -278,7 +296,7 @@ namespace LiftIt.Models
                 int order = 1;
                 foreach (var exId in exerciseIds)
                 {
-                    using var cmd2 = new MySqlCommand("INSERT INTO exercises_in_plan (plan_id, exercies_id, excercise_order) VALUES (@p,@e,@o)", conn, tran);
+                    using var cmd2 = new MySqlCommand("INSERT INTO exercises_in_plan (plan_id, exercise_id, exercise_order) VALUES (@p,@e,@o)", conn, tran);
                     cmd2.Parameters.AddWithValue("@p", planId);
                     cmd2.Parameters.AddWithValue("@e", exId);
                     cmd2.Parameters.AddWithValue("@o", order++);
@@ -293,13 +311,13 @@ namespace LiftIt.Models
         {
             var list = new List<ExercisesInPlan>();
             const string query = @"
-                SELECT eip.id, eip.plan_id, eip.exercies_id, eip.excercise_order,
-                       ex.name AS exercise_name, bp.name AS body_part_name
+                SELECT eip.id, eip.plan_id, eip.exercise_id, eip.exercise_order,
+               ex.name AS exercise_name, bp.name AS body_part_name
                 FROM exercises_in_plan eip
-                JOIN exercises ex ON eip.exercies_id = ex.id
+                JOIN exercises ex ON eip.exercise_id = ex.id
                 JOIN body_parts bp ON ex.body_part_id = bp.id
                 WHERE eip.plan_id = @planId
-                ORDER BY eip.excercise_order";
+                ORDER BY eip.exercise_order";
             try
             {
                 using var conn = GetConnection();
@@ -313,8 +331,8 @@ namespace LiftIt.Models
                     {
                         Id = reader.GetInt32("id"),
                         PlanId = reader.GetInt32("plan_id"),
-                        ExerciseId = reader.GetInt32("exercies_id"),
-                        Order = reader.GetInt32("excercise_order"),
+                        ExerciseId = reader.GetInt32("exercise_id"),
+                        Order = reader.GetInt32("exercise_order"),
                         ExerciseName = reader.IsDBNull("exercise_name") ? "" : reader.GetString("exercise_name"),
                         BodyPartName = reader.IsDBNull("body_part_name") ? "" : reader.GetString("body_part_name")
                     });
@@ -504,6 +522,128 @@ namespace LiftIt.Models
             {
                 System.Diagnostics.Debug.WriteLine($"Błąd aktualizacji profilu: {ex.Message}");
                 return false;
+            }
+        }
+        public async Task<List<BodyPart>> GetBodyParts()
+        {
+            var list = new List<BodyPart>();
+            const string query = "SELECT id, name FROM body_parts ORDER BY name";
+
+            try
+            {
+                using var conn = GetConnection();
+                await conn.OpenAsync();
+
+                using var cmd = new MySqlCommand(query, conn);
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    list.Add(new BodyPart
+                    {
+                        Id = reader.GetInt32("id"),
+                        Name = reader.IsDBNull("name") ? "" : reader.GetString("name")
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd GetBodyParts: {ex.Message}");
+            }
+
+            return list;
+        }
+        public async Task<List<Exercise>> GetExercisesByBodyPartId(int bodyPartId)
+        {
+            var list = new List<Exercise>();
+            const string query = @"
+                SELECT e.id, e.name, e.body_part_id, bp.name AS body_part_name, e.user_id
+                FROM exercises e
+                JOIN body_parts bp ON e.body_part_id = bp.id
+                WHERE e.body_part_id = @bpId
+                ORDER BY e.name";
+
+            try
+            {
+                using var conn = GetConnection();
+                await conn.OpenAsync();
+
+                using var cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@bpId", bodyPartId);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    list.Add(new Exercise
+                    {
+                        Id = reader.GetInt32("id"),
+                        Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
+                        BodyPartId = reader.IsDBNull("body_part_id") ? 0 : reader.GetInt32("body_part_id"),
+                        BodyPartName = reader.IsDBNull("body_part_name") ? "" : reader.GetString("body_part_name"),
+                        UserId = reader.IsDBNull("user_id") ? null : reader.GetInt32("user_id")
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd GetExercisesByBodyPartId: {ex.Message}");
+            }
+
+            return list;
+        }
+        public async Task SaveWorkoutPlan(string name, List<Exercise> exercises, int userId)
+        {
+            if (exercises == null || !exercises.Any())
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            await conn.OpenAsync();
+
+            using var transaction = await conn.BeginTransactionAsync();
+
+            try
+            {
+                var insertPlanQuery = @"
+                    INSERT INTO workout_plans (user_id, name, creation_date)
+                    VALUES (@user_id, @name, @date);
+                    SELECT LAST_INSERT_ID();";
+
+                int planId;
+
+                using (var cmd = new MySqlCommand(insertPlanQuery, conn, (MySqlTransaction)transaction))
+                {
+                    cmd.Parameters.AddWithValue("@user_id", userId);
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@date", DateTime.Now);
+
+                    planId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                }
+
+                var insertExerciseQuery = @"
+                    INSERT INTO exercises_in_plan (plan_id, exercise_id, exercise_order)
+                    VALUES (@plan_id, @exercise_id, @order);";
+
+                int order = 1;
+
+                foreach (var ex in exercises)
+                {
+                    using var cmd = new MySqlCommand(insertExerciseQuery, conn, (MySqlTransaction)transaction);
+                    cmd.Parameters.AddWithValue("@plan_id", planId);
+                    cmd.Parameters.AddWithValue("@exercise_id", ex.Id);
+                    cmd.Parameters.AddWithValue("@order", order++);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

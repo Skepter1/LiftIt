@@ -213,7 +213,7 @@ namespace LiftIt.Models
 
         public async Task AddExerciseToPlanAsync(int planId, int exerciseId, int order)
         {
-            const string insert = "INSERT INTO exercises_in_plan (plan_id, exercies_id, excercise_order) VALUES (@p, @e, @o)";
+            const string insert = "INSERT INTO exercises_in_plan (plan_id, exercise_id, excercise_order) VALUES (@p, @e, @o)";
             try
             {
                 using var conn = GetConnection();
@@ -243,7 +243,7 @@ namespace LiftIt.Models
                 int order = 1;
                 foreach (var exId in exerciseIds)
                 {
-                    using var cmd2 = new MySqlCommand("INSERT INTO exercises_in_plan (plan_id, exercies_id, excercise_order) VALUES (@p,@e,@o)", conn, tran);
+                    using var cmd2 = new MySqlCommand("INSERT INTO exercises_in_plan (plan_id, exercise_id, excercise_order) VALUES (@p,@e,@o)", conn, tran);
                     cmd2.Parameters.AddWithValue("@p", planId);
                     cmd2.Parameters.AddWithValue("@e", exId);
                     cmd2.Parameters.AddWithValue("@o", order++);
@@ -258,10 +258,10 @@ namespace LiftIt.Models
         {
             var list = new List<ExercisesInPlan>();
             const string query = @"
-                SELECT eip.id, eip.plan_id, eip.exercies_id, eip.excercise_order,
+                SELECT eip.id, eip.plan_id, eip.exercise_id, eip.excercise_order,
                        ex.name AS exercise_name, bp.name AS body_part_name
                 FROM exercises_in_plan eip
-                JOIN exercises ex ON eip.exercies_id = ex.id
+                JOIN exercises ex ON eip.exercise_id = ex.id
                 JOIN body_parts bp ON ex.body_part_id = bp.id
                 WHERE eip.plan_id = @planId
                 ORDER BY eip.excercise_order";
@@ -278,7 +278,7 @@ namespace LiftIt.Models
                     {
                         Id = reader.GetInt32("id"),
                         PlanId = reader.GetInt32("plan_id"),
-                        ExerciseId = reader.GetInt32("exercies_id"),
+                        ExerciseId = reader.GetInt32("exercise_id"),
                         Order = reader.GetInt32("excercise_order"),
                         ExerciseName = reader.IsDBNull("exercise_name") ? "" : reader.GetString("exercise_name"),
                         BodyPartName = reader.IsDBNull("body_part_name") ? "" : reader.GetString("body_part_name")
