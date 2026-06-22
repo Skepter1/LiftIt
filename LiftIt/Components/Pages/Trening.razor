@@ -2,399 +2,121 @@
 @layout MainLayout
 @implements LiftIt.Interfaces.ITreningView
 @inject LiftIt.Models.DatabaseContext DbContext
-@inject LiftIt.Models.StateService StateService
+@inject LiftIt.Models.StateService State
 
-<h3>Plany treningowe i sesja na żywo</h3>
-
-<div class="row">
-    <div class="col-5">
-        <h4>Twoje plany</h4>
-        <button class="btn btn-sm btn-secondary mb-2" @onclick="LoadPlans">Odśwież</button>
-
-        @if (plans == null)
-        {
-            <p>Ładowanie...</p>
-        }
-        else if (plans.Count == 0)
-        {
-            <p>Brak planów.</p>
-        }
-        else
-        {
-            <ul class="list-group">
-                @foreach (var p in plans)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>@p.Name</strong>
-                            <div class="text-muted small">@p.CreationDate.ToShortDateString()</div>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-success me-1" @onclick="() => StartPlan(p.Id)">Uruchom</button>
-                            <button class="btn btn-sm btn-primary me-1" @onclick="() => EditPlan(p.Id)">Edytuj</button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => DeletePlan(p.Id)">Usuń</button>
-                        </div>
-                    </li>
-                }
-            </ul>
-        }
-    </div>
-
-    <div class="col-7">
-        <h4>@(editingPlanId == 0 ? "Utwórz nowy plan" : "Edytuj plan")</h4>
-
-        <div class="mb-2">
-            <label class="form-label">Nazwa rutyny</label>
-            <input class="form-control" @bind="RoutineName" />
-        </div>
-
-        <div class="mb-2">
-            <button class="btn btn-primary" @onclick="CreateRoutine">Utwórz roboczo</button>
-            <button class="btn btn-success ms-1" @onclick="SaveRoutine">@((editingPlanId == 0) ? "Zapisz" : "Zapisz zmiany")</button>
-        </div>
-
-        <!-- Wstaw gdzieś pod przyciskami Create/Save -->
-        @if (localDrafts.Any())
-        {
-            <h5>Twoje drafty</h5>
-            <ul class="list-group mb-2">
-                @foreach (var d in localDrafts)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>@d.Name</strong>
-                            <div class="small text-muted">@d.CreatedAt.ToString("g") — @d.ExerciseIds.Count ćwiczeń</div>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => LoadDraft(d.Id)">Załaduj</button>
-                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteDraft(d.Id)">Usuń</button>
-                        </div>
-                    </li>
-                }
-            </ul>
-        }
-
-        <h5>Dostępne ćwiczenia</h5>
-        @if (exercises == null)
-        {
-            <p>Ładowanie...</p>
-        }
-        else
-        {
-            <div style="max-height:320px; overflow:auto; border:1px solid #eee; padding:8px;">
-                @foreach (var e in exercises)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="ex_@e.Id" @bind="selected[e.Id]" />
-                        <label class="form-check-label" for="ex_@e.Id">
-                            <strong>@e.Name</strong> <span class="text-muted">(@e.BodyPartName)</span>
-                        </label>
-                    </div>
-                }
-            </div>
-        }
-
-        <p class="text-muted mt-2">@message</p>
-    </div>
-</div>
-
-<hr />
-
-<h4>Sesja na żywo</h4>
-@if (currentTrainingId == 0)
-{
-    <button class="btn btn-warning mb-2" @onclick="StartSession">Start sesji</button>
-}
-else
-{
-    <div class="mb-2">
-        <p>Sesja ID: <strong>@currentTrainingId</strong></p>
-    </div>
-
-    @if (planLoadedItems != null && planLoadedItems.Count > 0)
+<div class="workout-dashboard-container">
+    @if (!State.IsLoggedIn)
     {
-        <h5>Ćwiczenia z planu</h5>
-        @foreach (var item in planLoadedItems)
-        {
-            <div class="card mb-2 p-2">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <strong>@item.ExerciseName</strong> <small class="text-muted">(@item.BodyPartName)</small>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => ToggleExerciseSets(item.ExerciseId)">Pokaż serie</button>
-                    </div>
-                </div>
-
-                @if (visibleExerciseSets.Contains(item.ExerciseId))
-                {
-                    <div class="mt-2">
-                        <div class="d-flex gap-2">
-                            <input class="form-control w-25" type="number" @bind="perExerciseSetNumber[item.ExerciseId]" min="1" />
-                            <input class="form-control w-25" type="number" step="0.25" @bind="perExerciseWeight[item.ExerciseId]" />
-                            <input class="form-control w-25" type="number" @bind="perExerciseReps[item.ExerciseId]" />
-                            <button class="btn btn-sm btn-primary" @onclick="() => AddSetToExercise(item.ExerciseId)">Dodaj</button>
-                        </div>
-
-                        <div class="mt-2">
-                            <h6>Serie</h6>
-                            @if (exerciseSets.TryGetValue(item.ExerciseId, out var list) && list.Count > 0)
-                            {
-                                <ul>
-                                    @foreach (var s in list)
-                                    {
-                                        <li>#@s.SetNumber — w:@s.Weight — reps:@s.Reps</li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <p>Brak serii.</p>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+        <div class="auth-card m-auto">
+            <h1>Welcome to <span class="accent-text">LiftIt</span></h1>
+            <p class="mt-3">Please <a class="accent-text text-decoration-none fw-bold" href="logowanie">Sign In</a> to continue.</p>
+        </div>
     }
     else
     {
-        <p class="text-muted">Brak załadowanych ćwiczeń z planu. Możesz dodać ćwiczenia ręcznie lub uruchomić plan.</p>
+        <div class="dashboard-wrapper">
+
+            <div class="dashboard-header mb-4">
+                <h2 class="m-0">Start Workout</h2>
+                <p class="m-0" style="color: var(--text-darker);">Choose how you want to train today</p>
+            </div>
+
+            <NavLink class="dashboard-action-tile quick-start text-decoration-none" href="workout">
+                <div class="tile-content">
+                    <div class="tile-icon-box">
+                        <span class="bi-menu-icon bi-graph-up-fill-nav-menu tile-icon"></span>
+                    </div>
+                    <div class="tile-text">
+                        <h3>Start an Empty Workout</h3>
+                        <p>Track exercises, sets, and weight in real-time</p>
+                    </div>
+                </div>
+                <span class="bi-chevron-right text-muted"></span>
+            </NavLink>
+
+            <NavLink class="dashboard-action-tile create-routine text-decoration-none" href="NewPlan">
+                <div class="tile-content">
+                    <div class="tile-icon-box alternate">
+                        <span class="bi-menu-icon bi-person-fill-nav-menu tile-icon"></span>
+                    </div>
+                    <div class="tile-text">
+                        <h3>Create New Template</h3>
+                        <p>Build a custom routine using your workout planner</p>
+                    </div>
+                </div>
+                <span class="bi-chevron-right text-muted"></span>
+            </NavLink>
+
+            <div class="section-divider my-4">
+                <h5>Workout Templates</h5>
+            </div>
+
+            @if (UserPlans == null)
+            {
+                <p class="text-muted text-center">Loading your templates...</p>
+            }
+            else if (UserPlans.Count == 0)
+            {
+                <div class="empty-routines-placeholder text-center p-4" style="border: 2px dashed var(--input-border); border-radius: 12px;">
+                    <p class="m-0 text-muted">Your custom workout templates will appear here.</p>
+                    <NavLink href="NewPlan" class="accent-text d-inline-block mt-2 text-decoration-none small fw-bold">
+                        + Create your first plan
+                    </NavLink>
+                </div>
+            }
+            else
+            {
+                @foreach (var plan in UserPlans)
+                {
+                    <div class="card mb-2 p-3 d-flex flex-row justify-content-between align-items-center"
+                         style="background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--input-border); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+                        <div>
+                            <h5 class="m-0 fw-bold" style="color: var(--text-main); font-size: 1.05rem;">@plan.Name</h5>
+                            <small class="" style="font-size: 0.8rem; color: var(--text-darker);">Saved: @plan.CreationDate.ToShortDateString()</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-primary py-2 px-3 fw-bold d-flex align-items-center"
+                               href="/NewPlan/@plan.Id">
+                                EDIT
+                            </a>
+
+                            <a class="btn btn-sm btn-success fw-bold px-3 py-2 d-flex align-items-center"
+                               href="/workout/@plan.Id"
+                               style="background-color: #26b050 !important; border: none; border-radius: 8px; color: white !important; text-decoration: none;">
+                                START
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
     }
-
-    <div class="mt-3">
-        <label>Notatka końcowa</label>
-        <textarea class="form-control" @bind="endNotes"></textarea>
-        <button class="btn btn-danger mt-2" @onclick="EndSession">Zakończ sesję</button>
-    </div>
-}
-
-<p class="mt-3 text-info">@message</p>
+</div>
 
 @code {
-    // View / presenter
-    private LiftIt.Presenters.TreningPresenter presenter;
-    private List<LiftIt.Models.Exercise> exercises;
-    private Dictionary<int, bool> selected = new();
-    public string RoutineName { get; set; } = "";
-    public List<int> SelectedExerciseIds => selected.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
-    public event Action CreateRoutineRequested;
-    public event Action SaveRoutineRequested;
+    private LiftIt.Presenters.TreningPresenter _presenter;
+    private string statusMessage = "";
 
-    // plans
-    private List<LiftIt.Models.WorkoutPlan> plans;
-    private int editingPlanId = 0;
+    // Implementacja interfejsu ITreningView
+    public List<LiftIt.Models.WorkoutPlan> UserPlans { get; set; } = new();
 
-    // live session
-    private int currentTrainingId = 0;
-    private List<LiftIt.Models.SetRecord> sets = new();
-    private string endNotes = "";
+    public event Action InitializeRequested;
 
-    // plan -> live
-    private List<LiftIt.Models.ExercisesInPlan> planLoadedItems = null;
-
-    // per-exercise sets UI
-    private Dictionary<int, List<LiftIt.Models.SetRecord>> exerciseSets = new();
-    private HashSet<int> visibleExerciseSets = new();
-    private Dictionary<int, int> perExerciseSetNumber = new();
-    private Dictionary<int, decimal> perExerciseWeight = new();
-    private Dictionary<int, int> perExerciseReps = new();
-
-    private string message = "";
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        presenter = new LiftIt.Presenters.TreningPresenter(this, DbContext, StateService);
-        exercises = await DbContext.GetAllExercisesAsync();
-        foreach (var e in exercises) selected[e.Id] = false;
-        plans = await presenter.LoadUserPlansAsync();
+        // Inicjalizacja Prezentera dla tego Widoku
+        _presenter = new LiftIt.Presenters.TreningPresenter(this, DbContext, State);
+
+        // Wywołanie zdarzenia w celu pobrania najświeższych planów z MySQL
+        InitializeRequested?.Invoke();
     }
 
-    // Plans: load/create/edit/delete
-    async Task LoadPlans()
-    {
-        plans = await presenter.LoadUserPlansAsync();
-        StateHasChanged();
-    }
-
-    private record RoutineDraftItem(int Id, string Name, List<int> ExerciseIds, DateTime CreatedAt);
-
-    private List<RoutineDraftItem> localDrafts = new();
-    private int nextDraftId = 1;
-
-    void CreateRoutine()
-    {
-        // Zbierz aktualny draft z UI
-        var draft = new RoutineDraftItem(
-            nextDraftId++,
-            RoutineName ?? string.Empty,
-            SelectedExerciseIds.ToList(),
-            DateTime.Now
-        );
-
-        // Zapisz lokalnie (w pamięci komponentu)
-        localDrafts.Insert(0, draft);
-
-        // Wyczyść UI (jak wcześniej)
-        editingPlanId = 0;
-        RoutineName = "";
-        foreach (var k in selected.Keys.ToList()) selected[k] = false;
-
-        message = $"Draft utworzony lokalnie (id={draft.Id}).";
-    }
-
-    void LoadDraft(int draftId)
-    {
-        var d = localDrafts.FirstOrDefault(x => x.Id == draftId);
-        if (d == null) return;
-
-        // załaduj do formularza
-        editingPlanId = 0;
-        RoutineName = d.Name;
-        foreach (var k in selected.Keys.ToList()) selected[k] = d.ExerciseIds.Contains(k);
-        message = $"Załadowano draft {d.Id}.";
-    }
-
-    void DeleteDraft(int draftId)
-    {
-        localDrafts.RemoveAll(x => x.Id == draftId);
-        message = $"Usunięto draft {draftId}.";
-    }
-
-    async Task SaveRoutine()
-    {
-        if (editingPlanId == 0)
-        {
-            SaveRoutineRequested?.Invoke();
-            await Task.Delay(200);
-            await LoadPlans();
-        }
-        else
-        {
-            var ok = await presenter.UpdatePlanNameAsync(editingPlanId, RoutineName);
-            await presenter.UpdatePlanExercisesAsync(editingPlanId, SelectedExerciseIds);
-            message = ok ? "Zapisano zmiany w planie." : "Błąd zapisu nazwy planu.";
-            await LoadPlans();
-        }
-    }
-
-    async Task EditPlan(int planId)
-    {
-        editingPlanId = planId;
-        var details = await presenter.GetPlanDetailsAsync(planId);
-        if (details.plan != null)
-        {
-            RoutineName = details.plan.Name;
-            var ids = details.items.Select(x => x.ExerciseId).ToHashSet();
-            foreach (var k in selected.Keys.ToList()) selected[k] = ids.Contains(k);
-            message = $"Edytujesz plan: {RoutineName}";
-        }
-    }
-
-    async Task DeletePlan(int planId)
-    {
-        var ok = await presenter.DeletePlanAsync(planId);
-        message = ok ? "Usunięto plan." : "Nie udało się usunąć planu.";
-        await LoadPlans();
-    }
-
-    // Live session: start/add set/end
-    async Task StartSession()
-    {
-        currentTrainingId = await presenter.StartSessionAsync();
-        sets = new List<LiftIt.Models.SetRecord>();
-        planLoadedItems = null;
-        message = currentTrainingId > 0 ? "Sesja rozpoczęta." : "Zaloguj się aby uruchomić sesję.";
-    }
-
-    async Task AddSetToExercise(int exerciseId)
-    {
-        if (currentTrainingId == 0) { message = "Najpierw uruchom sesję."; return; }
-
-        // Bezpieczne odczytanie wartości ze słowników z wartościami domyślnymi
-        int setNum = perExerciseSetNumber.ContainsKey(exerciseId) ? perExerciseSetNumber[exerciseId] : 1;
-        decimal w = perExerciseWeight.ContainsKey(exerciseId) ? perExerciseWeight[exerciseId] : 0m;
-        int r = perExerciseReps.ContainsKey(exerciseId) ? perExerciseReps[exerciseId] : 8;
-
-        try
-        {
-            var id = await presenter.AddSetAsync(currentTrainingId, exerciseId, setNum, w, r);
-            if (id > 0)
-            {
-                await LoadSetsForExercise(exerciseId);
-                message = "Dodano serię.";
-            }
-            else message = "Błąd dodawania.";
-        }
-        catch (Exception ex)
-        {
-            message = "Błąd: " + ex.Message;
-        }
-    }
-
-    async Task LoadSetsForExercise(int exerciseId)
-    {
-        if (currentTrainingId == 0) return;
-        var all = await presenter.GetSetsForSessionAsync(currentTrainingId);
-        var filtered = all.Where(s => s.ExerciseId == exerciseId).OrderBy(s => s.SetNumber).ToList();
-        exerciseSets[exerciseId] = filtered;
-        StateHasChanged();
-    }
-
-    void ToggleExerciseSets(int exerciseId)
-    {
-        if (visibleExerciseSets.Contains(exerciseId))
-        {
-            visibleExerciseSets.Remove(exerciseId);
-        }
-        else
-        {
-            visibleExerciseSets.Add(exerciseId);
-
-            // Upewniamy się, że klucze istnieją zanim będą użyte w @bind
-            if (!perExerciseSetNumber.ContainsKey(exerciseId)) perExerciseSetNumber[exerciseId] = 1;
-            if (!perExerciseWeight.ContainsKey(exerciseId)) perExerciseWeight[exerciseId] = 0m;
-            if (!perExerciseReps.ContainsKey(exerciseId)) perExerciseReps[exerciseId] = 8;
-
-            if (!exerciseSets.ContainsKey(exerciseId)) exerciseSets[exerciseId] = new List<LiftIt.Models.SetRecord>();
-
-            // Załaduj istniejące serie (asynchronicznie)
-            _ = LoadSetsForExercise(exerciseId);
-        }
-    }
-
-    async Task EndSession()
-    {
-        if (currentTrainingId == 0) { message = "Brak aktywnej sesji."; return; }
-        var ok = await presenter.EndSessionAsync(currentTrainingId, endNotes);
-        if (ok)
-        {
-            message = "Sesja zakończona.";
-            currentTrainingId = 0;
-            sets = new List<LiftIt.Models.SetRecord>();
-            planLoadedItems = null;
-            endNotes = "";
-            visibleExerciseSets.Clear();
-            exerciseSets.Clear();
-        }
-        else message = "Błąd zakończenia sesji.";
-    }
-
-    async Task StartPlan(int planId)
-    {
-        var res = await presenter.RunPlanAsSessionAsync(planId);
-        currentTrainingId = res.trainingId;
-        planLoadedItems = res.planItems;
-        sets = new List<LiftIt.Models.SetRecord>();
-        visibleExerciseSets.Clear();
-        exerciseSets.Clear();
-        message = currentTrainingId > 0 ? "Uruchomiono plan jako sesję." : "Błąd uruchomienia planu.";
-    }
-
-    // ITreningView implementation
     public void ShowMessage(string message)
     {
-        this.message = message;
-        StateHasChanged();
+        statusMessage = message;
+        RefreshUI();
     }
+
+    public void RefreshUI() => StateHasChanged();
 }
