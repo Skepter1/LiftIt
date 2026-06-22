@@ -18,7 +18,7 @@ public class HomePresenter
     {
         if (_stateService.IsLoggedIn && _stateService.CurrentUser != null)
         {
-            // 2. Pobieramy ID dynamicznie z obiektu stanu (zmień nazwę właściwości, jeśli u Ciebie nazywa się inaczej, np. Id lub UserId)
+            // 2. Pobieramy ID dynamicznie z obiektu stanu
             int currentUserId = _stateService.CurrentUser.id;
 
             // 3. Pobieramy historię z bazy dla TEGO konkretnego ID
@@ -27,7 +27,6 @@ public class HomePresenter
         }
         else
         {
-            // Jeśli jakimś cudem wszedł tu niezalogowany, zwracamy pustą listę
             view.Trainings = new System.Collections.Generic.List<TrainingHistoryDto>();
         }
     }

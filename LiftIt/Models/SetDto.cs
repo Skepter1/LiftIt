@@ -6,7 +6,7 @@ namespace LiftIt.Models
 {
     public class SetDto
     {
-        public int SetNumber { get; set; } // <-- Upewnij się, że 'S' i 'N' są wielkie!
+        public int SetNumber { get; set; }
         public double Weight { get; set; }
         public int Reps { get; set; }
     }

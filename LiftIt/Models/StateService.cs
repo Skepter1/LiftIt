@@ -10,8 +10,6 @@ namespace LiftIt.Models
 
         public Uzytkownik CurrentUser { get; set; }
         public bool DarkTheme { get; set; } = true;
-
-        // Dodajemy draft rutyny — przechowuje się między stronami
         public RoutineDraft CurrentRoutineDraft { get; set; } = new RoutineDraft();
     }
 }
