@@ -25,7 +25,122 @@
     --accent-hover: #00528c;
     --text-main: #121212; /* Ciemny tekst */
     --text-darker: #555555;
+    --options-bg: #ffffff;
 }
+
+.tab-with-topbar-container .p-3 {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Tytuł paska górnego */
+.page-title {
+    color: var(--text-main);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Nagłówki sekcji (Ćwiczenia, Mój Plan) */
+.tab-with-topbar-container h4 {
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    padding-left: 4px;
+}
+
+/* Karta wyboru partii oraz karta zapisu planu (Identyczna z kartą Routine) */
+.tab-with-topbar-container .card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+}
+
+/* Dedykowany kontener na listy (Dostępne ćwiczenia / Wybrane ćwiczenia) */
+.tab-with-topbar-container .scrollable-exercise-list {
+    background-color: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 16px;
+    padding: 8px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Styl pojedynczego wiersza ćwiczenia (wzorowany na wierszu planu w Routine) */
+.exercise-row-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--input-border);
+}
+
+    /* Usunięcie dolnej ramki dla ostatniego elementu na liście */
+    .exercise-row-item:last-child {
+        border-bottom: none;
+    }
+
+/* Tekst nazwy ćwiczenia */
+.exercise-name-text {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Wygładzenie i dopasowanie selecta do ciemnego/jasnego motywu */
+.tab-with-topbar-container select.form-control {
+    background-color: var(--input-bg) !important;
+    border: 2px solid var(--input-border) !important;
+    color: var(--text-main) !important;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+    .tab-with-topbar-container select.form-control:focus {
+        border-color: var(--accent-color) !important;
+        box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
+    }
+
+/* Drobne poprawki estetyczne dla małych przycisków akcji (Bootstrap) */
+.tab-with-topbar-container .btn-sm {
+    padding: 6px 12px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Przycisk dodawania (btn-success) w stylu sportowym */
+.tab-with-topbar-container .btn-success {
+    background-color: #26b050 !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+    .tab-with-topbar-container .btn-success:active {
+        transform: scale(0.96);
+    }
+
+/* Przyciski strzałek góra/dół (btn-outline-secondary) */
+.tab-with-topbar-container .btn-outline-secondary {
+    border-color: var(--input-border) !important;
+    color: var(--text-darker) !important;
+}
+
+    .tab-with-topbar-container .btn-outline-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+.light-mode .tab-with-topbar-container .btn-outline-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+
+
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -144,6 +259,10 @@ input::placeholder {
 
 .accent-text {
     color: var(--accent-color);
+}
+
+.main-text{
+    color: var(--text-main);
 }
 
 .error-message {
