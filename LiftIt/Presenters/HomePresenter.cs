@@ -6,8 +6,6 @@ public class HomePresenter
 {
     private readonly DatabaseContext _dbContext;
     private readonly StateService _stateService;
-
-    // DatabaseContext wstrzykuje się automatycznie przez konstruktor
     public HomePresenter(DatabaseContext dbContext, StateService stateService)
     {
         _dbContext = dbContext;
@@ -18,10 +16,8 @@ public class HomePresenter
     {
         if (_stateService.IsLoggedIn && _stateService.CurrentUser != null)
         {
-            // 2. Pobieramy ID dynamicznie z obiektu stanu
             int currentUserId = _stateService.CurrentUser.id;
 
-            // 3. Pobieramy historię z bazy dla TEGO konkretnego ID
             var history = await _dbContext.GetUserTrainingHistoryAsyncTwo(currentUserId);
             view.Trainings = history;
         }

@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using LiftIt.Interfaces
-@using LiftIt.Models
 @implements IHomeView
 @inject HomePresenter Presenter
 @inject LiftIt.Models.StateService State
@@ -15,17 +13,17 @@
     } else {
         <div class="home-container">
         <div class="main-header">
-            <h3>Twoja Historia Treningów</h3>
-            <p style="color: var(--text-darker)">Przeglądaj swoje postępy</p>
+                <h3>Your Training History</h3>
+                <p style="color: var(--text-darker)">View your progress</p>
         </div>
 
         @if (Trainings == null)
         {
-            <p class="status-text">Ładowanie treningów...</p>
+                <p class="status-text">Loading workouts...</p>
         }
         else if (!Trainings.Any())
         {
-            <p class="status-text">Brak treningów w historii. Czas unieść trochę ciężarów!</p>
+                <p class="status-text">No workouts in your exercise history. Time to lift some weights!</p>
         }
         else
         {
@@ -34,7 +32,7 @@
                 {
                     <div class="training-card">
                         <div class="card-top">
-                            <h4>Trening #@training.Id</h4>
+                            <h4>Training #@training.Id</h4>
                             <p class="date">@training.TrainingDate.ToString("dd.MM.yyyy")</p>
                         </div>
 
@@ -46,8 +44,8 @@
                                     @foreach (var set in exercise.Sets)
                                     {
                                         <li class="set-item">
-                                            <span>Seria @set.SetNumber</span>
-                                            <span><strong>@set.Weight.ToString("0.##")</strong> kg x <strong>@set.Reps</strong> powt.</span>
+                                            <span>Set @set.SetNumber</span>
+                                            <span><strong>@set.Weight.ToString("0.##")</strong> kg x <strong>@set.Reps</strong> reps.</span>
                                         </li>
                                     }
                                 </ul>

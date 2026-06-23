@@ -1,14 +1,12 @@
-/* Centrowanie karty edycji na ekranie */
 .blank-screen-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Karta zaczyna się od góry z eleganckim odstępem */
+    align-items: flex-start;
     min-height: 70vh;
     padding: 20px;
     background-color: var(--body-bg);
 }
 
-/* Karta formularza */
 .edit-profile-card {
     background-color: var(--card-bg);
     border-radius: 16px;
@@ -18,7 +16,6 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Nagłówek sekcji wewnątrz karty */
 .section-title {
     color: var(--text-main);
     font-weight: 600;
@@ -27,7 +24,6 @@
     padding-bottom: 10px;
 }
 
-/* Dopasowanie tytułu na pasku górnym */
 .page-title {
     font-size: 1.25rem;
     font-weight: 700;

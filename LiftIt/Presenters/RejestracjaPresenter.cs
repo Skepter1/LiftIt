@@ -1,14 +1,15 @@
 ﻿using LiftIt.Models;
+using LiftIt.Interfaces;
 
 namespace LiftIt.Presenters
 {
     public class RejestracjaPresenter
     {
-        private readonly Interfaces.IRejestracjaView _view;
-        private readonly Models.DatabaseContext _dbContext;
-        private readonly Models.StateService _stateService;
+        private readonly IRejestracjaView _view;
+        private readonly DatabaseContext _dbContext;
+        private readonly StateService _stateService;
 
-        public RejestracjaPresenter(Interfaces.IRejestracjaView view, Models.DatabaseContext dbContext, Models.StateService stateService)
+        public RejestracjaPresenter(IRejestracjaView view, DatabaseContext dbContext, StateService stateService)
         {
             _view = view;
             _dbContext = dbContext;
@@ -19,14 +20,12 @@ namespace LiftIt.Presenters
 
         private async void OnUserSignUpRequested()
         {
-            // 1. Walidacja zgodności haseł
             if (_view.Password != _view.PasswordConfirm)
             {
                 _view.ShowSignUpError("Passwords do not match");
                 return;
             }
 
-            // 2. Unikalność adresu e-mail
             bool emailZajety = await _dbContext.IsEmailRegisteredAsync(_view.Email);
             if (emailZajety)
             {
@@ -34,25 +33,20 @@ namespace LiftIt.Presenters
                 return;
             }
 
-            // 3. Budowanie obiektu użytkownika
-            var nowyUzytkownik = new Models.Uzytkownik
+            var nowyUzytkownik = new Uzytkownik
             {
                 login = _view.Login,
                 email = _view.Email,
                 password = _view.Password
             };
 
-            // 4. Zapis do bazy danych — odbieramy wygenerowane ID (np. 12, 13, 14...)
             int wygenerowaneId = await _dbContext.SignUpUserInMySQL(nowyUzytkownik);
 
-            // Jeśli baza zwróciła poprawne ID (większe od zera)
             if (wygenerowaneId > 0)
             {
-                // 🔥 KLUCZOWE: Przypisujemy prawdziwe ID z bazy danych do obiektu w pamięci!
                 nowyUzytkownik.id = wygenerowaneId;
-
                 _stateService.IsLoggedIn = true;
-                _stateService.CurrentUser = nowyUzytkownik; // Teraz sesja pamięta poprawne ID!
+                _stateService.CurrentUser = nowyUzytkownik;
                 _view.RedirectHomePage();
             }
             else
@@ -60,6 +54,5 @@ namespace LiftIt.Presenters
                 _view.ShowSignUpError("An error occurred during registration. Please try again.");
             }
         }
-
     }
 }

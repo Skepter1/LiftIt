@@ -19,7 +19,6 @@ namespace LiftIt.Interfaces
         void ShowMessage(string message);
         void RefreshUI();
 
-        // NOWE: Zdarzenia cyklu życia i dodawania ćwiczeń
         event Action InitializeDataRequested;
         event Action<int> AddExerciseToSessionRequested;
 

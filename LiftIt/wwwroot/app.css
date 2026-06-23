@@ -35,14 +35,12 @@
     box-sizing: border-box;
 }
 
-/* Tytuł paska górnego */
 .page-title {
     color: var(--text-main);
     font-size: 1.25rem;
     font-weight: 700;
 }
 
-/* Nagłówki sekcji (Ćwiczenia, Mój Plan) */
 .tab-with-topbar-container h4 {
     color: var(--text-main);
     font-weight: 700;
@@ -51,7 +49,6 @@
     padding-left: 4px;
 }
 
-/* Karta wyboru partii oraz karta zapisu planu (Identyczna z kartą Routine) */
 .tab-with-topbar-container .card {
     background-color: var(--card-bg) !important;
     border: 1px solid var(--input-border) !important;
@@ -61,7 +58,6 @@
     margin-bottom: 20px;
 }
 
-/* Dedykowany kontener na listy (Dostępne ćwiczenia / Wybrane ćwiczenia) */
 .tab-with-topbar-container .scrollable-exercise-list {
     background-color: var(--card-bg);
     border: 1px solid var(--input-border);
@@ -70,7 +66,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Styl pojedynczego wiersza ćwiczenia (wzorowany na wierszu planu w Routine) */
 .exercise-row-item {
     display: flex;
     justify-content: space-between;
@@ -79,19 +74,16 @@
     border-bottom: 1px solid var(--input-border);
 }
 
-    /* Usunięcie dolnej ramki dla ostatniego elementu na liście */
     .exercise-row-item:last-child {
         border-bottom: none;
     }
 
-/* Tekst nazwy ćwiczenia */
 .exercise-name-text {
     color: var(--text-main);
     font-weight: 600;
     font-size: 1rem;
 }
 
-/* Wygładzenie i dopasowanie selecta do ciemnego/jasnego motywu */
 .tab-with-topbar-container select.form-control {
     background-color: var(--input-bg) !important;
     border: 2px solid var(--input-border) !important;
@@ -107,14 +99,12 @@
         box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
     }
 
-/* Drobne poprawki estetyczne dla małych przycisków akcji (Bootstrap) */
 .tab-with-topbar-container .btn-sm {
     padding: 6px 12px;
     font-weight: 600;
     border-radius: 6px;
 }
 
-/* Przycisk dodawania (btn-success) w stylu sportowym */
 .tab-with-topbar-container .btn-success {
     background-color: #26b050 !important;
     border: none !important;
@@ -125,7 +115,6 @@
         transform: scale(0.96);
     }
 
-/* Przyciski strzałek góra/dół (btn-outline-secondary) */
 .tab-with-topbar-container .btn-outline-secondary {
     border-color: var(--input-border) !important;
     color: var(--text-darker) !important;
@@ -152,29 +141,27 @@ html, body {
     color: var(--accent-color)
 }
 
-/*Auth content*/
 .auth-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 85vh;
     padding: 20px;
-    background-color: var(--body-bg); /* Ciemne tło w stylu Heavy */
+    background-color: var(--body-bg);
 }
 
-/* Wygląd samej karty auth */
+
 .auth-card {
-    background-color: var(--card-bg); /* Nieco jaśniejszy grafit dla kontrastu */
-    border-radius: 16px; /* Modne, mocne zaokrąglenie rogów */
+    background-color: var(--card-bg);
+    border-radius: 16px;
     padding: 40px 30px;
     width: 100%;
-    max-width: 400px; /* Żeby na tablecie/PC nie rozjechało się na cały ekran */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); /* Delikatny, głęboki cień */
+    max-width: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     color: var(--text-main);
     text-align: center;
 }
 
-/* Kontenery na inputy */
 .input-group {
     margin-bottom: 20px;
     text-align: left;
@@ -192,7 +179,6 @@ input::placeholder {
     color: var(--text-darker);
 }
 
-/* Stylowanie pól tekstowych inputów*/
 .form-control {
     background-color: var(--input-bg);
     border: 2px solid var(--input-border);
@@ -204,7 +190,6 @@ input::placeholder {
     width: 100%;
 }
 
-    /* Efekt "świecenia" po kliknięciu w pole */
     .form-control:focus {
         background-color: var(--input-bg);
         border-color: var(--accent-color);
@@ -213,7 +198,6 @@ input::placeholder {
         box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
     }
 
-/* Stylowanie głównego przycisku */
 .btn-primary-custom {
     width: 100%;
     background-color: var(--accent-color);
@@ -233,7 +217,6 @@ input::placeholder {
         background-color: var(--accent-hover);
     }
 
-    /* Efekt kliknięcia przycisku (delikatne zmniejszenie pod palcem) */
     .btn-primary-custom:active {
         transform: scale(0.98);
     }

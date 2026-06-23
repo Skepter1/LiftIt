@@ -4,7 +4,6 @@
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    /* JAWNIE przypisujemy tło ze zmiennej, która zmienia się w jasnym motywie */
     background-color: var(--body-bg) !important;
 }
 
@@ -16,26 +15,18 @@
 }
 
 .bottom-nav {
-    /* Bezpieczny zapis wysokości bez calc, jeśli MAUI stawia opór: */
     height: 65px;
     padding-bottom: env(safe-area-inset-bottom);
-    /* Przypisujemy tło ze zmiennej */
     background-color: var(--card-bg) !important;
     border-top: 1px solid var(--input-border);
     width: 100%;
     z-index: 100;
 }
-
-    /* TUTAJ JEST KLUCZ DO NAPRAWY ROZJECHANEJ NAWIGACJI:
-   Musimy jawnie zresetować kolory tekstu linków wewnątrz stópki, 
-   żeby system nie narzucał domyślnego niebieskiego koloru HTML.
-*/
     .bottom-nav a,
     .bottom-nav .nav-item-link {
         color: var(--text-darker) !important;
     }
 
-        /* Kolor aktywnego elementu w zależności od wybranego motywu */
         .bottom-nav .nav-item-link.active {
             color: var(--accent-color) !important;
         }

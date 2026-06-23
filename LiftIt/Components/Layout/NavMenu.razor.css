@@ -12,7 +12,7 @@
     display: inline-block;
     width: 1.4rem;
     height: 1.4rem;
-    background-color: currentColor; /* Magiczna linijka - bierze kolor z parametru 'color' rodzica! */
+    background-color: currentColor;
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-house-door-fill' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
@@ -28,7 +28,7 @@
     display: inline-block;
     width: 1.4rem;
     height: 1.4rem;
-    background-color: currentColor; /* Magiczna linijka - bierze kolor z parametru 'color' rodzica! */
+    background-color: currentColor;
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-graph-up' viewBox='0 0 16 16'%3E%3Cpath d='M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
@@ -40,7 +40,7 @@
     display: inline-block;
     width: 1.4rem;
     height: 1.4rem;
-    background-color: currentColor; /* Magiczna linijka - bierze kolor z parametru 'color' rodzica! */
+    background-color: currentColor;
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-person' viewBox='0 0 16 16'%3E%3Cpath d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
@@ -71,7 +71,6 @@
     transition: color 0.2s;
 }
 
-    /* Klasa .active jest automatycznie dodawana przez Blazor NavLink */
     .nav-item ::deep .nav-link.active {
         color: var(--text-main) !important;
     }

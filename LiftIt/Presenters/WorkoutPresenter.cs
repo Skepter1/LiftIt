@@ -13,7 +13,6 @@ namespace LiftIt.Presenters
         private readonly DatabaseContext _db;
         private readonly StateService _stateService;
 
-        // Klasyczny stoper w C#
         private Timer _workoutTimer;
         private int _elapsedSeconds = 0;
 
@@ -53,7 +52,7 @@ namespace LiftIt.Presenters
             if (_view.PlanLoadedItems == null) return;
             if (_view.PlanLoadedItems.Any(e => e.ExerciseId == exerciseId))
             {
-                _view.ShowMessage("To ćwiczenie jest już na liście treningu.");
+                _view.ShowMessage("This exercise is already on your training list.");
                 return;
             }
 
@@ -68,7 +67,7 @@ namespace LiftIt.Presenters
                     PlanId = 0,
                     Order = _view.PlanLoadedItems.Count + 1
                 });
-                _view.ShowMessage($"Dodano {ex.Name} do bieżącej sesji.");
+                _view.ShowMessage($"Added {ex.Name} to current session.");
                 _view.RefreshUI();
             }
         }
@@ -78,7 +77,7 @@ namespace LiftIt.Presenters
             int uid = _stateService?.CurrentUser?.id ?? 0;
             if (uid == 0)
             {
-                _view.ShowMessage("Zaloguj się aby uruchomić sesję.");
+                _view.ShowMessage("Log in to start your session.");
                 return;
             }
 
@@ -87,18 +86,17 @@ namespace LiftIt.Presenters
                 var res = await _db.RunPlanAsSessionAsync(_view.PlanId);
                 _view.CurrentTrainingId = res.trainingId;
                 _view.PlanLoadedItems = res.planItems;
-                _view.ShowMessage(_view.CurrentTrainingId > 0 ? "Uruchomiono plan jako sesję." : "Błąd uruchomienia planu.");
+                _view.ShowMessage(_view.CurrentTrainingId > 0 ? "Workout plan launched as a session." : "Workout plan launch error.");
             }
             else
             {
                 _view.CurrentTrainingId = await _db.StartTrainingSessionAsync(uid);
                 _view.PlanLoadedItems = new List<ExercisesInPlan>();
-                _view.ShowMessage(_view.CurrentTrainingId > 0 ? "Pusta sesja rozpoczęta." : "Błąd uruchomienia.");
+                _view.ShowMessage(_view.CurrentTrainingId > 0 ? "Empty session started." : "Startup error.");
             }
 
             _view.ExerciseSets.Clear();
 
-            // URUCHOMIENIE TIMERA: Jeśli sesja ruszyła poprawnie
             if (_view.CurrentTrainingId > 0)
             {
                 StartTimer();
@@ -115,11 +113,11 @@ namespace LiftIt.Presenters
             if (id > 0)
             {
                 OnLoadSets(exerciseId);
-                _view.ShowMessage("Dodano serię.");
+                _view.ShowMessage("Set has been added.");
             }
             else
             {
-                _view.ShowMessage("Błąd dodawania.");
+                _view.ShowMessage("Addition error.");
             }
         }
 
@@ -139,28 +137,26 @@ namespace LiftIt.Presenters
             bool ok = await _db.EndTrainingSessionAsync(_view.CurrentTrainingId, DateTime.Now, _view.EndNotes);
             if (ok)
             {
-                _view.ShowMessage("Sesja zakończona i zapisana.");
+                _view.ShowMessage("Session completed and saved.");
                 _view.CurrentTrainingId = 0;
                 _view.PlanLoadedItems = null;
                 _view.EndNotes = "";
                 _view.ExerciseSets.Clear();
 
-                // ZATRZYMANIE I RESET TIMERA
                 StopTimer();
             }
             else
             {
-                _view.ShowMessage("Błąd zakończenia sesji.");
+                _view.ShowMessage("Session termination error.");
             }
             _view.RefreshUI();
         }
 
-        // --- OBSŁUGA TIMERA ---
         private void StartTimer()
         {
-            StopTimer(); // Upewniamy się, że poprzedni timer nie działa
+            StopTimer();
             _elapsedSeconds = 0;
-            _workoutTimer = new Timer(TimerCallback, null, 1000, 1000); // Odpala się co 1 sekundę
+            _workoutTimer = new Timer(TimerCallback, null, 1000, 1000);
         }
 
         private void StopTimer()
@@ -174,11 +170,9 @@ namespace LiftIt.Presenters
         {
             _elapsedSeconds++;
 
-            // Konwersja sekund na format HH:mm:ss
             TimeSpan time = TimeSpan.FromSeconds(_elapsedSeconds);
             _view.FormattedTimerText = time.ToString(@"hh\:mm\:ss");
 
-            // Prośba do wątku UI w Blazorze o przerysowanie ekranu
             _view.RefreshUI();
         }
 

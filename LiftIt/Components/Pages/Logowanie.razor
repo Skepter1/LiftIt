@@ -62,11 +62,11 @@
 </div>
 
 @code {
-    [Inject] public Models.DatabaseContext DbContext { get; set; } // Wstrzykujemy model bazy danych
+    [Inject] public Models.DatabaseContext DbContext { get; set; }
     [Inject] public Models.StateService StateService { get; set; }
 
     private LogowaniePresenter _presenter;
-    private string errorMessage = ""; // Domyślnie błąd jest pusty, więc się nie wyświetla
+    private string errorMessage = ""; 
 
     public string Email { get; set; }
     public string Password { get; set; }
@@ -76,7 +76,6 @@
 
     protected override void OnInitialized()
     {
-        // Tworzymy prezenter i przekazujemy mu ten Widok (this) oraz Model (DbContext)
         _presenter = new LogowaniePresenter(this, DbContext, StateService);
     }
 
@@ -89,8 +88,8 @@
 
     public void ShowSignInError(string message)
     {
-        errorMessage = message; // Przypisujemy tekst przekazany z Prezentera
-        StateHasChanged(); // Wymuszamy na Blazorze odświeżenie HTML, aby pokazał spana
+        errorMessage = message;
+        StateHasChanged();
     }
 
     public void RedirectHomePage()

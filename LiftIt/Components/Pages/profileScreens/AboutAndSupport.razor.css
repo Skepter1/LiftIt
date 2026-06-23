@@ -1,4 +1,3 @@
-/* Kontener centrujący i pilnujący szerokości na smartfonie */
 .blank-screen-container {
     display: flex;
     justify-content: center;
@@ -10,10 +9,9 @@
 
 .support-wrapper {
     width: 100%;
-    max-width: 450px; /* Dostosowanie do szerokości kart auth */
+    max-width: 450px;
 }
 
-/* Wspólny styl dla kart na tym ekranie */
 .support-card {
     background-color: var(--card-bg);
     border-radius: 16px;
@@ -22,7 +20,6 @@
     color: var(--text-main);
 }
 
-/* Specyficzne style dla karty górnej (Info) */
 .info-card {
     border: 1px solid var(--input-border);
 }
@@ -38,7 +35,6 @@
     margin: 0 auto;
 }
 
-/* W jasnym motywie zmieniamy tło logo na delikatny niebieski */
 .light-mode .app-logo-placeholder {
     background-color: rgba(0, 107, 183, 0.1);
 }
@@ -86,7 +82,6 @@
     color: var(--text-main);
 }
 
-/* Styl nagłówków sekcji */
 .section-heading {
     color: var(--text-main);
     font-weight: 700;
@@ -94,7 +89,6 @@
     padding-left: 4px;
 }
 
-/* Klikalne karty akcji (FAQ / Contact) */
 .action-card {
     display: flex;
     align-items: center;
@@ -138,13 +132,11 @@
     color: var(--text-darker);
 }
 
-/* Prawa autorskie na dole */
 .copyright-text {
     font-size: 0.75rem;
     color: var(--text-darker);
 }
 
-/* Ikona strzałki w prawo (Chevron) oparta na masce CSS – dopasuje się do koloru tekstu */
 .bi-chevron-right {
     display: inline-block;
     width: 1.2rem;

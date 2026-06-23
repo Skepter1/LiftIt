@@ -17,13 +17,11 @@ namespace LiftIt.Presenters
             _db = db;
             _stateService = stateService;
 
-            // Łączymy zdarzenie ładowania widoku z logiką bazy danych
             _view.InitializeRequested += OnInitializeRequested;
         }
 
         private async void OnInitializeRequested()
         {
-            // Pobieramy ID zalogowanego użytkownika
             var uid = _stateService?.CurrentUser?.id ?? 0;
 
             if (uid == 0)
@@ -33,7 +31,6 @@ namespace LiftIt.Presenters
                 return;
             }
 
-            // Pobieramy plany z tabeli 'workout_plans', zapisane wcześniej przez NewPlan
             _view.UserPlans = await _db.GetWorkoutPlansForUserAsync(uid) ?? new List<WorkoutPlan>();
             _view.RefreshUI();
         }

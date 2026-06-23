@@ -18,7 +18,6 @@ input::placeholder {
     color: var(--text-darker);
 }
 
-/* Odnośnik do rejestracji */
 .register-redirect {
     margin-top: 25px;
     font-size: 0.9rem;

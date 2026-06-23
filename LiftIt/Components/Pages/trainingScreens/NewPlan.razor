@@ -11,16 +11,16 @@
         <NavLink href="trening" class="d-flex align-items-center text-decoration-none">
             <span class="bi bi-left-arrow accent-text"></span>
         </NavLink>
-        <h3 class="m-0 page-title">Twój plan treningowy</h3>
+        <h3 class="m-0 page-title">Your training plan</h3>
         <div style="width: 2rem;"></div>
     </div>
 
     <div class="p-3">
 
         <div class="card" style="color: var(--text-darker);">
-            <label class="form-label main-text small fw-bold uppercase mb-2" style="letter-spacing: 0.5px;">Wybierz część ciała</label>
+            <label class="form-label main-text small fw-bold uppercase mb-2" style="letter-spacing: 0.5px;">Select a body part</label>
             <select class="form-control" @onchange="OnBodyPartSelectChanged">
-                <option value="">-- wybierz część ciała --</option>
+                <option value="">-- select a body part --</option>
                 @foreach (var bp in BodyPartsList)
                 {
                     <option value="@bp.Id">@bp.Name</option>
@@ -30,13 +30,13 @@
 
         @if (Exercises != null && Exercises.Any())
         {
-            <h4>Dostępne ćwiczenia</h4>
+            <h4>Available exercises</h4>
             <div class="scrollable-exercise-list mb-4" style="max-height: 220px; overflow-y: auto;">
                 @foreach (var ex in Exercises)
                 {
                     <div class="exercise-row-item">
                         <span class="exercise-name-text">@ex.Name</span>
-                        <button class="btn btn-sm btn-success" @onclick="() => AddToPlanRequested?.Invoke(ex)">Dodaj</button>
+                        <button class="btn btn-sm btn-success" @onclick="() => AddToPlanRequested?.Invoke(ex)">Add</button>
                     </div>
                 }
             </div>
@@ -44,7 +44,7 @@
 
         @if (TrainingPlan != null && TrainingPlan.Count > 0)
         {
-            <h4>Mój plan</h4>
+            <h4>My Workout Plan</h4>
             <div class="scrollable-exercise-list mb-4">
                 @foreach (var ex in TrainingPlan)
                 {
@@ -66,10 +66,10 @@
 
         <div class="card">
             <label class="main-text small fw-bold uppercase mb-2" style="letter-spacing: 0.5px;">Nazwa planu</label>
-            <input class="form-control mb-3" @bind="PlanName" placeholder="np. Trening A - Klatka i Biceps" style="background-color: var(--input-bg); color: var(--text-main);" />
+            <input class="form-control mb-3" @bind="PlanName" placeholder="e.g. Workout A - Chest and Biceps" style="background-color: var(--input-bg); color: var(--text-main);" />
 
             <button class="btn-primary-custom w-100 m-0" @onclick="() => SavePlanRequested?.Invoke()">
-                💾 Zapisz plan
+                💾 Save workout plan
             </button>
         </div>
 
