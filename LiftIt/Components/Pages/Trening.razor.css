@@ -1,4 +1,3 @@
-/* Główny kontener ekranu treningu */
 .workout-dashboard-container {
     display: flex;
     flex-direction: column;
@@ -7,14 +6,12 @@
     box-sizing: border-box;
 }
 
-/* Wrapper pilnujący szerokości interfejsu na tabletach i PC */
 .dashboard-wrapper {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
 }
 
-/* Nagłówek pulpitu */
 .dashboard-header h2 {
     font-weight: 800;
     color: var(--text-main);
@@ -26,7 +23,6 @@
     font-size: 0.9rem;
 }
 
-/* Separator sekcji rutyn */
 .section-divider h5 {
     color: var(--text-main);
     font-weight: 700;
@@ -34,7 +30,6 @@
     margin: 0;
 }
 
-/* Styl potężnych kafelków akcji */
 .dashboard-action-tile {
     display: flex;
     align-items: center;
@@ -43,12 +38,11 @@
     border: 1px solid var(--input-border);
     border-radius: 16px;
     padding: 20px;
-    text-decoration: none !important; /* Usuwa domyślne podkreślenie linku */
+    text-decoration: none !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.15s, background-color 0.2s, border-color 0.2s;
 }
 
-    /* Efekty dotykowe / najechania */
     .dashboard-action-tile:hover {
         background-color: rgba(255, 255, 255, 0.02);
         border-color: var(--accent-color);
@@ -63,11 +57,10 @@
     align-items: center;
 }
 
-/* Kontener na ikonę wewnątrz kafelka */
 .tile-icon-box {
     width: 50px;
     height: 50px;
-    background-color: rgba(255, 204, 0, 0.1); /* Domyślny żółty akcent */
+    background-color: rgba(255, 204, 0, 0.1);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -76,12 +69,11 @@
     flex-shrink: 0;
 }
 
-/* Dynamiczna zmiana tła ikony w jasnym motywie dla lepszego kontrastu */
 .light-mode .tile-icon-box {
     background-color: rgba(0, 107, 183, 0.1);
 }
 
-/* Wariant alternatywny koloru tła ikony dla drugiej opcji (opcjonalnie) */
+
 .tile-icon-box.alternate {
     background-color: rgba(255, 255, 255, 0.05);
 }
@@ -96,7 +88,6 @@
     color: var(--accent-color);
 }
 
-/* Teksty wewnątrz kafelka */
 .tile-text h3 {
     margin: 0 0 4px 0;
     font-size: 1.1rem;
@@ -111,7 +102,6 @@
     line-height: 1.3;
 }
 
-/* Pusty stan dla listy szablonów */
 .empty-routines-placeholder {
     border: 2px dashed var(--input-border);
     border-radius: 12px;

@@ -1,13 +1,11 @@
-/* Główny kontener strony */
 .home-container {
     padding: 24px;
-    background-color: var(--body-bg); /* Identyczne ciemne tło jak na screenie */
+    background-color: var(--body-bg);
     min-height: 100vh;
     color: var(--text-main);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Nagłówek strony */
 .main-header h3 {
     font-size: 22px;
     font-weight: 700;
@@ -21,23 +19,21 @@
     margin-bottom: 24px;
 }
 
-/* Kontener na listę treningów */
 .training-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Pojedyncza karta treningu - stylizowana na panel logowania */
 .training-card {
-    background-color: var(--card-bg); /* Grafitowy panel z Twojego screena */
-    border-radius: 12px; /* Identyczne zaokrąglenia */
+    background-color: var(--card-bg);
+    border-radius: 12px; 
     padding: 20px;
-    border: 1px solid #2d2d2d; /* Subtelna ramka, żeby panel odcinał się od tła */
+    border: 1px solid #2d2d2d;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Nagłówek karty treningowej */
+
 .card-top {
     display: flex;
     justify-content: space-between;
@@ -51,7 +47,7 @@
         margin: 0;
         font-size: 16px;
         font-weight: 700;
-        color: var(--accent-color); /* Żółty akcent nawiązujący do przycisku SIGN IN */
+        color: var(--accent-color);
     }
 
     .card-top .date {
@@ -61,7 +57,6 @@
         font-weight: 500;
     }
 
-/* Grupa ćwiczenia */
 .exercise-group {
     margin-bottom: 16px;
 }
@@ -77,7 +72,6 @@
         color: var(--text-main);
     }
 
-/* Lista serii w treningu */
 .sets-list {
     list-style: none;
     padding: 0;
@@ -88,21 +82,20 @@
 }
 
 .set-item {
-    background-color: var(--card-bg); /* Ciemniejsza sekcja dla serii */
+    background-color: var(--card-bg); 
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 13px;
     display: flex;
     justify-content: space-between;
     color: var(--text-main);
-    border-left: 3px solid #ffcc00; /* Żółty pasek z boku dla dekoracji */
+    border-left: 3px solid #ffcc00; 
 }
 
     .set-item span strong {
         color: var(--text-main);
     }
 
-/* Komunikaty stanu (ładowanie/pusto) */
 .status-text {
     color: var(--text-main);
     text-align: center;
