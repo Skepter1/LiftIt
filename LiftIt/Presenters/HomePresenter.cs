@@ -22,7 +22,7 @@ public class HomePresenter
             int currentUserId = _stateService.CurrentUser.id;
 
             // 3. Pobieramy historię z bazy dla TEGO konkretnego ID
-            var history = await _dbContext.GetUserTrainingHistoryAsync(currentUserId);
+            var history = await _dbContext.GetUserTrainingHistoryAsyncTwo(currentUserId);
             view.Trainings = history;
         }
         else

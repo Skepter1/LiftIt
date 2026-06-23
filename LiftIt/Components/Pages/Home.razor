@@ -3,50 +3,61 @@
 @using LiftIt.Models
 @implements IHomeView
 @inject HomePresenter Presenter
+@inject LiftIt.Models.StateService State
 
-<div class="home-container">
-    <div class="main-header">
-        <h3>Twoja Historia Treningów</h3>
-        <p>Przeglądaj swoje postępy</p>
-    </div>
-
-    @if (Trainings == null)
+<div class="auth-container">
+    @if (!State.IsLoggedIn)
     {
-        <p class="status-text">Ładowanie treningów...</p>
-    }
-    else if (!Trainings.Any())
-    {
-        <p class="status-text">Brak treningów w historii. Czas unieść trochę ciężarów!</p>
-    }
-    else
-    {
-        <div class="training-list">
-            @foreach (var training in Trainings)
-            {
-                <div class="training-card">
-                    <div class="card-top">
-                        <h4>Trening #@training.Id</h4>
-                        <p class="date">@training.TrainingDate.ToString("dd.MM.yyyy")</p>
-                    </div>
-
-                    @foreach (var exercise in training.Exercises)
-                    {
-                        <div class="exercise-group">
-                            <h5>💪 @exercise.ExerciseName</h5>
-                            <ul class="sets-list">
-                                @foreach (var set in exercise.Sets)
-                                {
-                                    <li class="set-item">
-                                        <span>Seria @set.SetNumber</span>
-                                        <span><strong>@set.Weight.ToString("0.##")</strong> kg x <strong>@set.Reps</strong> powt.</span>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
-                </div>
-            }
+        <div class="auth-card m-auto">
+            <h1>Welcome to <span class="accent-text">LiftIt</span></h1>
+            <p class="mt-3">Please <a class="accent-text text-decoration-none fw-bold" href="logowanie">Sign In</a> to continue.</p>
         </div>
+    } else {
+        <div class="home-container">
+        <div class="main-header">
+            <h3>Twoja Historia Treningów</h3>
+            <p style="color: var(--text-darker)">Przeglądaj swoje postępy</p>
+        </div>
+
+        @if (Trainings == null)
+        {
+            <p class="status-text">Ładowanie treningów...</p>
+        }
+        else if (!Trainings.Any())
+        {
+            <p class="status-text">Brak treningów w historii. Czas unieść trochę ciężarów!</p>
+        }
+        else
+        {
+            <div class="training-list">
+                @foreach (var training in Trainings)
+                {
+                    <div class="training-card">
+                        <div class="card-top">
+                            <h4>Trening #@training.Id</h4>
+                            <p class="date">@training.TrainingDate.ToString("dd.MM.yyyy")</p>
+                        </div>
+
+                        @foreach (var exercise in training.Exercises)
+                        {
+                            <div class="exercise-group">
+                                <h5>💪 @exercise.ExerciseName</h5>
+                                <ul class="sets-list">
+                                    @foreach (var set in exercise.Sets)
+                                    {
+                                        <li class="set-item">
+                                            <span>Seria @set.SetNumber</span>
+                                            <span><strong>@set.Weight.ToString("0.##")</strong> kg x <strong>@set.Reps</strong> powt.</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
     }
 </div>
 

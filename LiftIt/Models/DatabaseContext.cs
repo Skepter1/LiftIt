@@ -58,7 +58,7 @@ namespace LiftIt.Models
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"B��d podczas rejestracji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
                 return false;
             }
         }

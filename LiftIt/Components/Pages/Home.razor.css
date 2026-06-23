@@ -1,9 +1,9 @@
 /* Główny kontener strony */
 .home-container {
     padding: 24px;
-    background-color: #121212; /* Identyczne ciemne tło jak na screenie */
+    background-color: var(--body-bg); /* Identyczne ciemne tło jak na screenie */
     min-height: 100vh;
-    color: #ffffff;
+    color: var(--text-main);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -11,12 +11,12 @@
 .main-header h3 {
     font-size: 22px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-main);
     margin-bottom: 4px;
 }
 
 .main-header p {
-    color: #aaaaaa;
+    color: var(--card-bg);
     font-size: 14px;
     margin-bottom: 24px;
 }
@@ -30,7 +30,7 @@
 
 /* Pojedyncza karta treningu - stylizowana na panel logowania */
 .training-card {
-    background-color: #1e1e1e; /* Grafitowy panel z Twojego screena */
+    background-color: var(--card-bg); /* Grafitowy panel z Twojego screena */
     border-radius: 12px; /* Identyczne zaokrąglenia */
     padding: 20px;
     border: 1px solid #2d2d2d; /* Subtelna ramka, żeby panel odcinał się od tła */
@@ -51,7 +51,7 @@
         margin: 0;
         font-size: 16px;
         font-weight: 700;
-        color: #ffcc00; /* Żółty akcent nawiązujący do przycisku SIGN IN */
+        color: var(--accent-color); /* Żółty akcent nawiązujący do przycisku SIGN IN */
     }
 
     .card-top .date {
@@ -74,7 +74,7 @@
         margin: 0 0 8px 0;
         font-size: 14px;
         font-weight: 600;
-        color: #ffffff;
+        color: var(--text-main);
     }
 
 /* Lista serii w treningu */
@@ -88,23 +88,23 @@
 }
 
 .set-item {
-    background-color: #262626; /* Ciemniejsza sekcja dla serii */
+    background-color: var(--card-bg); /* Ciemniejsza sekcja dla serii */
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 13px;
     display: flex;
     justify-content: space-between;
-    color: #dddddd;
+    color: var(--text-main);
     border-left: 3px solid #ffcc00; /* Żółty pasek z boku dla dekoracji */
 }
 
     .set-item span strong {
-        color: #ffffff;
+        color: var(--text-main);
     }
 
 /* Komunikaty stanu (ładowanie/pusto) */
 .status-text {
-    color: #aaaaaa;
+    color: var(--text-main);
     text-align: center;
     margin-top: 40px;
     font-size: 15px;
