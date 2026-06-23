@@ -13,16 +13,14 @@ namespace LiftIt.Tests
         [Fact]
         public async Task InitAsync_UzytkownikZalogowany_PrzekazujeTreningiDoWidoku()
         {
-            // --- ARRANGE (Przygotowanie danych wejściowych) ---
+            // ARRANGE 
 
-            // 1. Symulujemy, że użytkownik "Deny" z ID = 4 jest zalogowany w aplikacji
             var stateService = new StateService
             {
                 IsLoggedIn = true,
                 CurrentUser = new Uzytkownik { id = 4, login = "Deny" }
             };
 
-            // 2. Przygotowujemy sztuczną historię treningów, którą rzekomo zwróci nasza baza
             var mockHistory = new List<TrainingHistoryDto>
             {
                 new TrainingHistoryDto { Id = 1, Notes = "Trening klatki" },
@@ -32,39 +30,33 @@ namespace LiftIt.Tests
             var fakeDbContext = new FakeDatabaseContext();
             fakeDbContext.TrainingsToReturn = mockHistory;
 
-            // 3. Tworzymy atrapę (Mock) dla Twojego interfejsu widoku IHomeView
             var mockView = new Mock<IHomeView>();
             List<TrainingHistoryDto> assignedTrainings = null;
 
-            // Przechwytujemy moment, w którym Prezenter przypisze dane do właściwości 'Trainings' widoku
             mockView.SetupSet(v => v.Trainings = It.IsAny<List<TrainingHistoryDto>>())
                     .Callback<List<TrainingHistoryDto>>(val => assignedTrainings = val);
 
-            // Tworzymy instancję prezentera z naszymi podstawionymi zależnościami
             var presenter = new HomePresenter(fakeDbContext, stateService);
 
-            // --- ACT (Wykonanie testowanej metody) ---
+            // ACT
             await presenter.InitAsync(mockView.Object);
 
-            // --- ASSERT (Weryfikacja oczekiwanych rezultatów) ---
+            // ASSERT
 
-            // Sprawdzamy, czy prezenter w ogóle przekazał listę do widoku
             Assert.NotNull(assignedTrainings);
 
-            // Sprawdzamy, czy widok otrzymał dokładnie 2 treningi
             Assert.Equal(2, assignedTrainings.Count);
             Assert.Equal("Trening klatki", assignedTrainings[0].Notes);
 
-            // Weryfikujemy za pomocą Moq, czy właściwość została ustawiona dokładnie jeden raz
+  
             mockView.VerifySet(v => v.Trainings = It.IsAny<List<TrainingHistoryDto>>(), Times.Once);
         }
 
         [Fact]
         public async Task InitAsync_UzytkownikNiezalogowany_ZwracaPustaListeDoWidoku()
         {
-            // --- ARRANGE (Przygotowanie danych wejściowych) ---
+            // ARRANGE
 
-            // Symulujemy sytuację, w której użytkownik NIE jest zalogowany
             var stateService = new StateService
             {
                 IsLoggedIn = false,
@@ -80,14 +72,13 @@ namespace LiftIt.Tests
 
             var presenter = new HomePresenter(fakeDbContext, stateService);
 
-            // --- ACT (Wykonanie) ---
+            // ACT
             await presenter.InitAsync(mockView.Object);
 
-            // --- ASSERT (Weryfikacja) ---
+            // ASSERT
 
-            // Prezenter przy braku autoryzacji powinien przekazać zainicjalizowaną, pustą listę
             Assert.NotNull(assignedTrainings);
-            Assert.Empty(assignedTrainings); // Oczekujemy 0 elementów na liście
+            Assert.Empty(assignedTrainings);
         }
     }
 }

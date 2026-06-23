@@ -17,7 +17,6 @@ namespace LiftIt.Tests
         public int StartedTrainingId { get; set; }
         public List<SetRecord> SetsToReturn { get; set; } = new();
 
-        // Nadpisania metod dla TreningPresenter i WorkoutPresenter
         public override Task<List<WorkoutPlan>> GetWorkoutPlansForUserAsync(int userId)
             => Task.FromResult(WorkoutPlansToReturn);
 

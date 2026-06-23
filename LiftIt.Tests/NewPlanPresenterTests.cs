@@ -13,7 +13,7 @@ namespace LiftIt.Tests
         {
             // ARRANGE
             var mockView = new Mock<INewPlanView>();
-            mockView.Setup(v => v.PlanName).Returns(""); // Pusta nazwa
+            mockView.Setup(v => v.PlanName).Returns("");
 
             var fakeDb = new FakeDatabaseContext();
             var stateService = new StateService { CurrentUser = new Uzytkownik { id = 1 } };
@@ -24,7 +24,7 @@ namespace LiftIt.Tests
             await Task.Delay(50);
 
             // ASSERT
-            mockView.Verify(v => v.ShowMessage("Podaj nazwę planu!"), Times.Once);
+            mockView.Verify(v => v.ShowMessage("Enter the name of the plan!"), Times.Once);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace LiftIt.Tests
             mockView.Setup(v => v.PlanName).Returns("Mój Nowy Plan");
 
             var fakeDb = new FakeDatabaseContext();
-            var stateService = new StateService { CurrentUser = null }; // Niezalogowany
+            var stateService = new StateService { CurrentUser = null };
             var presenter = new NewPlanPresenter(mockView.Object, fakeDb, stateService);
 
             // ACT
@@ -43,7 +43,7 @@ namespace LiftIt.Tests
             await Task.Delay(50);
 
             // ASSERT
-            mockView.Verify(v => v.ShowMessage("Musisz być zalogowany, aby zapisać plan."), Times.Once);
+            mockView.Verify(v => v.ShowMessage("You must be logged in to save your plan."), Times.Once);
         }
     }
 }

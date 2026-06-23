@@ -10,6 +10,7 @@
         <p class="subtitle">Fill all the fields to Sign Up.</p>
 
         <form @onsubmit="OnRejestracjaClicked">
+
             <div class="input-group">
                 <label for="login">Login</label>
                 <input id="login" class="form-control" placeholder="Login" @bind="Login" required />
@@ -42,6 +43,7 @@
         <div class="register-redirect">
             <span>Already have an account? <a href="/logowanie">Sign in</a></span>
         </div>
+
     </div>
 </div>
 
@@ -52,6 +54,7 @@
     private string errorMessage = "";
     private RejestracjaPresenter _presenter;
     
+
     public string Login { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }

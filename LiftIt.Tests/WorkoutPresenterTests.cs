@@ -41,14 +41,13 @@ namespace LiftIt.Tests
             // ARRANGE
             var mockView = new Mock<IWorkoutView>();
 
-            // !!! DODAJ TĘ LINIJKĘ: Automatycznie inicjalizuje i pozwala zapisywać wszystkie get/set !!!
             mockView.SetupAllProperties();
 
-            mockView.Setup(v => v.PlanId).Returns(0); // Pusta sesja bez planu
+            mockView.Setup(v => v.PlanId).Returns(0);
             mockView.Setup(v => v.ExerciseSets).Returns(new Dictionary<int, List<SetRecord>>());
 
             var fakeDb = new FakeDatabaseContext();
-            fakeDb.StartedTrainingId = 99; // Baza nadaje ID sesji treningowej = 99
+            fakeDb.StartedTrainingId = 99;
 
             var stateService = new StateService
             {
@@ -62,9 +61,8 @@ namespace LiftIt.Tests
             await Task.Delay(50);
 
             // ASSERT
-            // Ponieważ SetupAllProperties zapisało wartość w obiekcie, sprawdzamy ją bezpośrednio:
             Assert.Equal(99, mockView.Object.CurrentTrainingId);
-            mockView.Verify(v => v.ShowMessage("Pusta sesja rozpoczęta."), Times.Once);
+            mockView.Verify(v => v.ShowMessage("Empty session started."), Times.Once);
         }
 
         [Fact]
@@ -73,7 +71,6 @@ namespace LiftIt.Tests
             // ARRANGE
             var mockView = new Mock<IWorkoutView>();
 
-            // !!! DODAJ TĘ LINIJKĘ, ABY PREZENTER NIE PRZERWAŁ METODY:
             mockView.Setup(v => v.CurrentTrainingId).Returns(99);
 
             mockView.Setup(v => v.EndNotes).Returns("Dobry trening");
@@ -92,8 +89,8 @@ namespace LiftIt.Tests
             // ASSERT
             mockView.VerifySet(v => v.CurrentTrainingId = 0, Times.Once);
             mockView.VerifySet(v => v.EndNotes = "", Times.Once);
-            mockView.VerifySet(v => v.FormattedTimerText = "00:00:00", Times.Once); // Timer zresetowany
-            mockView.Verify(v => v.ShowMessage("Sesja zakończona i zapisana."), Times.Once);
+            mockView.VerifySet(v => v.FormattedTimerText = "00:00:00", Times.Once);
+            mockView.Verify(v => v.ShowMessage("Session completed and saved."), Times.Once);
         }
     }
 }
