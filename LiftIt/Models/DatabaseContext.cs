@@ -31,11 +31,11 @@ namespace LiftIt.Models
         // ---- Uwierzytelnianie użytkowników ----
 
         // rejestracja użytkownika w bazie danych MySQL
-        public async Task<int> SignUpUserInMySQL(Uzytkownik uzytkownik)
+        public virtual async Task<int> SignUpUserInMySQL(Uzytkownik uzytkownik)
         {
             const string query = @"INSERT INTO users (login, email, password_hash, date_of_registration) 
-                             VALUES (@login, @email, @password_hash, @date_of_registration);
-                             SELECT LAST_INSERT_ID();";
+                                 VALUES (@login, @email, @password_hash, @date_of_registration);
+                                 SELECT LAST_INSERT_ID();";
             try
             {
                 using var connection = GetConnection();
@@ -58,7 +58,7 @@ namespace LiftIt.Models
         }
 
         // logowanie użytkownika w bazie danych MySQL
-        public async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
+        public virtual async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
         {
             const string query = "SELECT id, login, email, password_hash FROM users WHERE email = @email";
             try
@@ -96,7 +96,7 @@ namespace LiftIt.Models
         }
 
         // sprawdzanie, czy e-mail jest już zarejestrowany w bazie danych MySQL
-        public async Task<bool> IsEmailRegisteredAsync(string email)
+        public virtual async Task<bool> IsEmailRegisteredAsync(string email)
         {
             const string query = "SELECT COUNT(*) FROM users WHERE email = @email";
             try
@@ -118,7 +118,7 @@ namespace LiftIt.Models
         }
 
         // modyfikacja profilu użytkownika w bazie danych MySQL
-        public async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
+        public virtual async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
         {
             bool zmieniamyLogin = !string.IsNullOrWhiteSpace(nowyLogin);
             bool zmieniamyHaslo = !string.IsNullOrWhiteSpace(noweHaslo);
@@ -158,7 +158,8 @@ namespace LiftIt.Models
         }
 
         // ---- BODY PARTS & EXERCISES (Części Ciała i Ćwiczenia) ----
-        public async Task<List<BodyPart>> GetBodyParts()
+
+        public virtual async Task<List<BodyPart>> GetBodyParts()
         {
             var list = new List<BodyPart>();
             const string query = "SELECT id, name FROM body_parts ORDER BY name";
@@ -182,7 +183,7 @@ namespace LiftIt.Models
         }
 
         // pobranie wszystkich ćwiczeń z bazy danych MySQL
-        public async Task<List<Exercise>> GetAllExercisesAsync()
+        public virtual async Task<List<Exercise>> GetAllExercisesAsync()
         {
             var list = new List<Exercise>();
             const string query = @"
@@ -213,7 +214,7 @@ namespace LiftIt.Models
         }
 
         // pobranie ćwiczeń dla konkretnej części ciała z bazy danych MySQL
-        public async Task<List<Exercise>> GetExercisesByBodyPartId(int bodyPartId)
+        public virtual async Task<List<Exercise>> GetExercisesByBodyPartId(int bodyPartId)
         {
             var list = new List<Exercise>();
             const string query = @"
@@ -246,8 +247,9 @@ namespace LiftIt.Models
         }
 
         // ---- WORKOUT PLANS (Szablony Treningów) ----
+
         // pobranie wszystkich szablonów treningów dla konkretnego użytkownika z bazy danych MySQL
-        public async Task<List<WorkoutPlan>> GetWorkoutPlansForUserAsync(int userId)
+        public virtual async Task<List<WorkoutPlan>> GetWorkoutPlansForUserAsync(int userId)
         {
             var list = new List<WorkoutPlan>();
             const string query = "SELECT id, user_id, name, creation_date FROM workout_plans WHERE user_id = @uid ORDER BY creation_date DESC";
@@ -274,7 +276,7 @@ namespace LiftIt.Models
         }
 
         // pobranie szablonu treningu po jego ID z bazy danych MySQL
-        public async Task<WorkoutPlan> GetWorkoutPlanByIdAsync(int id)
+        public virtual async Task<WorkoutPlan> GetWorkoutPlanByIdAsync(int id)
         {
             const string query = "SELECT id, user_id, name, creation_date FROM workout_plans WHERE id = @id";
             try
@@ -300,7 +302,7 @@ namespace LiftIt.Models
         }
 
         // utworzenie nowego szablonu treningu w bazie danych MySQL
-        public async Task<int> CreateWorkoutPlanAsync(WorkoutPlan plan)
+        public virtual async Task<int> CreateWorkoutPlanAsync(WorkoutPlan plan)
         {
             const string insert = "INSERT INTO workout_plans (user_id, name, creation_date) VALUES (@uid, @name, @date); SELECT LAST_INSERT_ID();";
             try
@@ -318,7 +320,7 @@ namespace LiftIt.Models
         }
 
         // aktualizacja nazwy szablonu treningu w bazie danych MySQL
-        public async Task<bool> UpdateWorkoutPlanAsync(int planId, int userId, string newName)
+        public virtual async Task<bool> UpdateWorkoutPlanAsync(int planId, int userId, string newName)
         {
             const string update = "UPDATE workout_plans SET name = @name WHERE id = @id AND user_id = @uid";
             try
@@ -336,7 +338,7 @@ namespace LiftIt.Models
         }
 
         // usunięcie szablonu treningu i powiązanych ćwiczeń w bazie danych MySQL
-        public async Task<bool> DeleteWorkoutPlanAsync(int planId, int userId)
+        public virtual async Task<bool> DeleteWorkoutPlanAsync(int planId, int userId)
         {
             const string deleteExercises = "DELETE FROM exercises_in_plan WHERE plan_id = @id";
             const string deletePlan = "DELETE FROM workout_plans WHERE id = @id AND user_id = @uid";
@@ -363,7 +365,7 @@ namespace LiftIt.Models
         }
 
         // zapisanie szablonu treningu wraz z ćwiczeniami w bazie danych MySQL
-        public async Task SaveWorkoutPlan(string name, List<Exercise> exercises, int userId)
+        public virtual async Task SaveWorkoutPlan(string name, List<Exercise> exercises, int userId)
         {
             if (exercises == null || !exercises.Any()) return;
 
@@ -411,7 +413,7 @@ namespace LiftIt.Models
         }
 
         // zapisanie ćwiczenia do szablonu treningu w bazie danych MySQL
-        public async Task AddExerciseToPlanAsync(int planId, int exerciseId, int order)
+        public virtual async Task AddExerciseToPlanAsync(int planId, int exerciseId, int order)
         {
             const string insert = "INSERT INTO exercises_in_plan (plan_id, exercise_id, exercise_order) VALUES (@p, @e, @o)";
             try
@@ -428,7 +430,7 @@ namespace LiftIt.Models
         }
 
         // aktualizacja listy ćwiczeń w szablonie treningu w bazie danych MySQL
-        public async Task UpdateExercisesInPlanAsync(int planId, List<int> exerciseIds)
+        public virtual async Task UpdateExercisesInPlanAsync(int planId, List<int> exerciseIds)
         {
             const string delete = "DELETE FROM exercises_in_plan WHERE plan_id = @p";
             try
@@ -456,7 +458,7 @@ namespace LiftIt.Models
         }
 
         // pobranie listy ćwiczeń w szablonie treningu z bazy danych MySQL
-        public async Task<List<ExercisesInPlan>> GetExercisesInPlanAsync(int planId)
+        public virtual async Task<List<ExercisesInPlan>> GetExercisesInPlanAsync(int planId)
         {
             var list = new List<ExercisesInPlan>();
             const string query = @"
@@ -492,7 +494,8 @@ namespace LiftIt.Models
         }
 
         // ---- TRAINING SESSIONS (Sesje Treningowe) ----
-        public async Task<int> StartTrainingSessionAsync(int userId)
+
+        public virtual async Task<int> StartTrainingSessionAsync(int userId)
         {
             const string insert = "INSERT INTO trainings_history (user_id, start_time) VALUES (@uid, CURRENT_TIMESTAMP()); SELECT LAST_INSERT_ID();";
             try
@@ -508,7 +511,7 @@ namespace LiftIt.Models
         }
 
         // zakończenie sesji treningowej w bazie danych MySQL
-        public async Task<bool> EndTrainingSessionAsync(int trainingId, DateTime? endTime, string notes)
+        public virtual async Task<bool> EndTrainingSessionAsync(int trainingId, DateTime? endTime, string notes)
         {
             const string update = "UPDATE trainings_history SET end_time = @end, notes = @notes WHERE id = @id";
             try
@@ -526,13 +529,13 @@ namespace LiftIt.Models
         }
 
         // dodanie lub aktualizacja rekordu zestawu ćwiczeń w bazie danych MySQL
-        public async Task<int> AddSetAsync(int trainingId, int exerciseId, int setNumber, decimal weight, int reps)
+        public virtual async Task<int> AddSetAsync(int trainingId, int exerciseId, int setNumber, decimal weight, int reps)
         {
             return await UpsertSetAsync(trainingId, exerciseId, setNumber, weight, reps);
         }
 
         // pobranie wszystkich zestawów ćwiczeń dla konkretnej sesji treningowej z bazy danych MySQL
-        public async Task<List<SetRecord>> GetSetsForSessionAsync(int trainingId)
+        public virtual async Task<List<SetRecord>> GetSetsForSessionAsync(int trainingId)
         {
             var list = new List<SetRecord>();
             const string query = "SELECT id, training_id, exercise_id, set_number, weight, reps FROM sets WHERE training_id = @t ORDER BY exercise_id, set_number";
@@ -561,7 +564,7 @@ namespace LiftIt.Models
         }
 
         // dodanie lub aktualizacja rekordu zestawu ćwiczeń w bazie danych MySQL
-        public async Task<int> UpsertSetAsync(int trainingId, int exerciseId, int setNumber, decimal weight, int reps)
+        public virtual async Task<int> UpsertSetAsync(int trainingId, int exerciseId, int setNumber, decimal weight, int reps)
         {
             try
             {
@@ -608,7 +611,7 @@ namespace LiftIt.Models
         }
 
         // pobranie historii treningów użytkownika z bazy danych MySQL
-        public async Task<List<TrainingHistoryDto>> GetUserTrainingHistoryAsyncTwo(int userId)
+        public virtual async Task<List<TrainingHistoryDto>> GetUserTrainingHistoryAsyncTwo(int userId)
         {
             var trainingList = new List<TrainingHistoryDto>();
             using var connection = GetConnection();
@@ -670,7 +673,7 @@ namespace LiftIt.Models
         }
 
         // uruchomienie szablonu treningu jako sesji treningowej w bazie danych MySQL
-        public async Task<(int trainingId, List<ExercisesInPlan> planItems)> RunPlanAsSessionAsync(int planId)
+        public virtual async Task<(int trainingId, List<ExercisesInPlan> planItems)> RunPlanAsSessionAsync(int planId)
         {
             var plan = await GetWorkoutPlanByIdAsync(planId);
             if (plan == null) return (0, new List<ExercisesInPlan>());

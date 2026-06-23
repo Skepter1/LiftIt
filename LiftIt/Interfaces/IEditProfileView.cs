@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Interfaces
 {
-    internal interface IEditProfileView
+    public interface IEditProfileView
     {
         string Name { get; set; }
         string Email { get; set; }

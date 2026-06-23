@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="LiftIt.Tests/LiftIt.Tests.csproj" Id="56b73378-8b3d-4995-8baf-b5d54e1c6179" />
   <Project Path="LiftIt/LiftIt.csproj">
     <Deploy Solution="Debug|*" />
   </Project>

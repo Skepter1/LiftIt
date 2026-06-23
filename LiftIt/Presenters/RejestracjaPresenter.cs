@@ -3,7 +3,7 @@ using LiftIt.Interfaces;
 
 namespace LiftIt.Presenters
 {
-    internal class RejestracjaPresenter
+    public class RejestracjaPresenter
     {
         private readonly IRejestracjaView _view;
         private readonly DatabaseContext _dbContext;
