@@ -19,49 +19,34 @@ namespace LiftIt.Models
             return new MySqlConnection(_connectionString);
         }
 
-        // Przykładowa metoda testowa, którą wywołacie w Modelu
-        public async Task<bool> TestPolaczenia()
-        {
-            using var connection = GetConnection();
-            try
-            {
-                await connection.OpenAsync();
-                return connection.State == ConnectionState.Open;
-            }
-            catch (Exception ex)
-            {
-                // Tutaj możecie podejrzeć błąd w razie problemów
-                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
-                return false;
-            }
-        }
-        public async Task<bool> SignUpUserInMySQL(Uzytkownik uzytkownik)
-        {
-            string query = @"INSERT INTO users (login, email, password_hash, date_of_registration) 
-                             VALUES (@login, @email, SHA2(@password_hash, 256), @date_of_registration)";
+        public async Task<int> SignUpUserInMySQL(Uzytkownik uzytkownik)
+{
+    // 🔥 DODANO: SELECT LAST_INSERT_ID(); na końcu zapytania
+    string query = @"INSERT INTO users (login, email, password_hash, date_of_registration) 
+                     VALUES (@login, @email, SHA2(@password_hash, 256), @date_of_registration);
+                     SELECT LAST_INSERT_ID();";
 
-            try
-            {
-                using var connection = GetConnection();
-                await connection.OpenAsync();
+    try
+    {
+        using var connection = GetConnection();
+        await connection.OpenAsync();
 
-                using var command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@login", uzytkownik.login);
-                command.Parameters.AddWithValue("@email", uzytkownik.email);
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@login", uzytkownik.login);
+        command.Parameters.AddWithValue("@email", uzytkownik.email);
+        command.Parameters.AddWithValue("@password_hash", uzytkownik.password);
+        command.Parameters.AddWithValue("@date_of_registration", DateTime.Now);
 
-                // UWAGA: tu przechowujesz has�o w polu password_hash � zast�p hashowaniem w przysz�o�ci
-                command.Parameters.AddWithValue("@password_hash", uzytkownik.password);
-                command.Parameters.AddWithValue("@date_of_registration", DateTime.Now);
-
-                int rowsAffected = await command.ExecuteNonQueryAsync();
-                return rowsAffected > 0;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
-                return false;
-            }
-        }
+        // 🔥 ZMIANA: Używamy ExecuteScalarAsync, aby odebrać nowe ID z bazy danych
+        var result = await command.ExecuteScalarAsync();
+        return result != null ? Convert.ToInt32(result) : 0;
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
+        return 0; // 0 oznacza, że rejestracja się nie powiodła
+    }
+}
 
         public async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
         {
@@ -107,6 +92,26 @@ namespace LiftIt.Models
             }
         }
 
+        public async Task<bool> IsEmailRegisteredAsync(string email)
+        {
+            const string query = "SELECT COUNT(*) FROM users WHERE email = @email";
+            try
+            {
+                using var connection = GetConnection();
+                await connection.OpenAsync();
+
+                using var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@email", email);
+
+                var count = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(count) > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas sprawdzania e-maila: {ex.Message}");
+                return true;
+            }
+        }
 
         public static string Sha256(string input)
         {
