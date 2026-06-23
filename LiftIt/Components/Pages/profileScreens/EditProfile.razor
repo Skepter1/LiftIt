@@ -47,7 +47,7 @@
 </div>
 
 @code {
-    [Inject] public Models.DatabaseContext DbContext { get; set; } // Wstrzykujemy model bazy danych
+    [Inject] public Models.DatabaseContext DbContext { get; set; }
     [Inject] public Models.StateService StateService { get; set; }
 
     private string successfulMessage = "";
@@ -68,7 +68,7 @@
     }
 
     public void SuccesfulModification(string message) {
-        successfulMessage = message; // Przypisujemy tekst przekazany z Prezentera
-        StateHasChanged(); // Wymuszamy na Blazorze odświeżenie HTML, aby pokazał spana
+        successfulMessage = message;
+        StateHasChanged();
     }
 }

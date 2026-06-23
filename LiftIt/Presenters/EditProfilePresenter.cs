@@ -20,18 +20,16 @@ namespace LiftIt.Presenters
 
         public async void OnModificationRequested()
         {
-            // Wewnątrz metody w Prezenterze:
             _view.SuccesfulModification("");
             int currentUserId = _stateService.CurrentUser.id;
             string nowyLogin = _view.Name;
             string noweHaslo = _view.Password;
-            string nowyEmail = _view.Email; // <-- POBIERAMY Z WIDOKU
+            string nowyEmail = _view.Email;
 
             bool sukces = await _dbContext.ModifyProfileInMySQL(currentUserId, nowyLogin, noweHaslo, nowyEmail);
 
             if (sukces)
             {
-                // Aktualizujemy dane w pamięci podręcznej aplikacji (sesji)
                 if (!string.IsNullOrWhiteSpace(nowyLogin)) _stateService.CurrentUser.login = nowyLogin;
                 if (!string.IsNullOrWhiteSpace(nowyEmail)) _stateService.CurrentUser.email = nowyEmail;
 

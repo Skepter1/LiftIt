@@ -18,7 +18,6 @@ namespace LiftIt.Presenters
             _db = db;
             _stateService = stateService;
 
-            // Wiązanie zdarzeń z widoku do metod prezentera
             _view.InitializeRequested += OnInitialize;
             _view.BodyPartChanged += OnBodyPartChanged;
             _view.AddToPlanRequested += OnAddToPlan;
@@ -30,24 +29,19 @@ namespace LiftIt.Presenters
 
         private async void OnInitialize()
         {
-            // 1. Ładujemy listę części ciała do selecta (to już było)
             _view.BodyPartsList = await _db.GetBodyParts() ?? new List<BodyPart>();
             _view.Exercises = new List<Exercise>();
 
-            // 2. KLUCZOWA ZMIANA: Sprawdzamy, czy użytkownik wszedł w tryb edycji konkretnego planu
             if (_view.PlanId > 0)
             {
-                // Pobieramy nagłówek planu (żeby wyciągnąć jego nazwę)
                 var istniejącyPlan = await _db.GetWorkoutPlanByIdAsync(_view.PlanId);
 
                 if (istniejącyPlan != null)
                 {
-                    _view.PlanName = istniejącyPlan.Name; // Wpisujemy nazwę planu do inputa
+                    _view.PlanName = istniejącyPlan.Name;
 
-                    // Pobieramy ćwiczenia przypisane do tego planu z bazy danych
                     var cwiczeniaWPlanie = await _db.GetExercisesInPlanAsync(_view.PlanId);
 
-                    // Mapujemy obiekty ExercisesInPlan z bazy danych na obiekty Exercise i wrzucamy do listy "Mój plan"
                     _view.TrainingPlan = cwiczeniaWPlanie.Select(item => new Exercise
                     {
                         Id = item.ExerciseId,
@@ -60,7 +54,6 @@ namespace LiftIt.Presenters
             }
             else
             {
-                // Jeśli PlanId == 0, otwieramy czysty kreator nowego planu
                 _view.TrainingPlan = new List<Exercise>();
             }
 
@@ -69,14 +62,10 @@ namespace LiftIt.Presenters
 
         private async void OnBodyPartChanged(int bodyPartId)
         {
-            if (bodyPartId > 0)
-            {
-                _view.Exercises = await _db.GetExercisesByBodyPartId(bodyPartId) ?? new List<Exercise>();
-            }
-            else
-            {
-                _view.Exercises = new List<Exercise>();
-            }
+            _view.Exercises = bodyPartId > 0
+                ? await _db.GetExercisesByBodyPartId(bodyPartId) ?? new List<Exercise>()
+                : new List<Exercise>();
+
             _view.RefreshUI();
         }
 
@@ -121,36 +110,35 @@ namespace LiftIt.Presenters
         {
             if (string.IsNullOrWhiteSpace(_view.PlanName))
             {
-                _view.ShowMessage("Podaj nazwę planu!");
+                _view.ShowMessage("Enter the name of the plan!");
                 return;
             }
 
             var currentUser = _stateService?.CurrentUser;
             if (currentUser == null)
             {
-                _view.ShowMessage("Musisz być zalogowany, aby zapisać plan.");
+                _view.ShowMessage("You must be logged in to save your plan.");
                 return;
             }
 
             if (!_view.TrainingPlan.Any())
             {
-                _view.ShowMessage("Twój plan jest pusty! Dodaj przynajmniej jedno ćwiczenie.");
+                _view.ShowMessage("Your plan is empty! Add at least one exercise.");
                 return;
             }
 
             try
             {
                 await _db.SaveWorkoutPlan(_view.PlanName, _view.TrainingPlan, currentUser.id);
-                _view.ShowMessage("Plan został pomyślnie zapisany w bazie danych!");
+                _view.ShowMessage("The plan was successfully saved in the database!");
 
-                // Reset formularza po sukcesie
                 _view.PlanName = "";
                 _view.TrainingPlan = new List<Exercise>();
                 _view.RefreshUI();
             }
             catch (Exception ex)
             {
-                _view.ShowMessage($"Błąd zapisu: {ex.Message}");
+                _view.ShowMessage($"Saving error: {ex.Message}");
             }
         }
 

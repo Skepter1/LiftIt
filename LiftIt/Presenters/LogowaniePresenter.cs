@@ -17,9 +17,8 @@ namespace LiftIt.Presenters
         {
             _view = view;
             _dbContext = dbContext;
-            _stateService = stateService; // <-- ZAPISUJEMY W POLU KLASY
+            _stateService = stateService;
 
-            // Subskrypcja zdarzenia kliknięcia
             _view.SignInUser += OnUserLoginRequested;
             _view.LogoutUser += OnLogoutUser;
 
@@ -34,11 +33,9 @@ namespace LiftIt.Presenters
                 _stateService.IsLoggedIn = true;
                 _stateService.CurrentUser = znalezionyUzytkownik;
                 _view.RedirectHomePage();
-                // _view.PozytywneZalogowanie();
             }
             else
             {
-                // PREZENTER WYDAJE ROZKAZ: Widoku, pokaż błąd z taką treścią!
                 _view.ShowSignInError("Niepoprawny e-mail lub hasło. Spróbuj ponownie.");
             }
         }
