@@ -1,7 +1,7 @@
 ﻿
 namespace LiftIt.Presenters
 {
-    internal class EditProfilePresenter
+    public class EditProfilePresenter
     {
         private readonly Interfaces.IEditProfileView _view;
         private readonly Models.DatabaseContext _dbContext;

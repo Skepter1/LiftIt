@@ -10,8 +10,6 @@ namespace LiftIt.Models
 {
     public class DatabaseContext
     {
-        // 127.0.0.1 działa TYLKO na Windows.
-        // Jeśli odpalisz emulator Androida, użyj adresu: 10.0.2.2 (to specjalny alias w emulatorze wskazujący na Twój PC)
         private readonly string _connectionString = "Server=127.0.0.1;Port=3306;Database=liftit;User ID=root;Password=;";
 
         public MySqlConnection GetConnection()
@@ -19,9 +17,8 @@ namespace LiftIt.Models
             return new MySqlConnection(_connectionString);
         }
 
-        public async Task<int> SignUpUserInMySQL(Uzytkownik uzytkownik)
+        public virtual async Task<int> SignUpUserInMySQL(Uzytkownik uzytkownik)
 {
-    // 🔥 DODANO: SELECT LAST_INSERT_ID(); na końcu zapytania
     string query = @"INSERT INTO users (login, email, password_hash, date_of_registration) 
                      VALUES (@login, @email, SHA2(@password_hash, 256), @date_of_registration);
                      SELECT LAST_INSERT_ID();";
@@ -37,18 +34,17 @@ namespace LiftIt.Models
         command.Parameters.AddWithValue("@password_hash", uzytkownik.password);
         command.Parameters.AddWithValue("@date_of_registration", DateTime.Now);
 
-        // 🔥 ZMIANA: Używamy ExecuteScalarAsync, aby odebrać nowe ID z bazy danych
         var result = await command.ExecuteScalarAsync();
         return result != null ? Convert.ToInt32(result) : 0;
     }
     catch (Exception ex)
     {
         System.Diagnostics.Debug.WriteLine($"Błąd podczas rejestracji: {ex.Message}");
-        return 0; // 0 oznacza, że rejestracja się nie powiodła
+        return 0;
     }
 }
 
-        public async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
+        public virtual async Task<Uzytkownik> SignInUserInMySQL(string email, string password)
         {
             string query = "SELECT id, login, email, password_hash FROM users WHERE email = @email";
 
@@ -92,7 +88,7 @@ namespace LiftIt.Models
             }
         }
 
-        public async Task<bool> IsEmailRegisteredAsync(string email)
+        public virtual async Task<bool> IsEmailRegisteredAsync(string email)
         {
             const string query = "SELECT COUNT(*) FROM users WHERE email = @email";
             try
@@ -126,7 +122,7 @@ namespace LiftIt.Models
         }
 
         // ---- Exercises / BodyParts ----
-        public async Task<List<Exercise>> GetAllExercisesAsync()
+        public virtual async Task<List<Exercise>> GetAllExercisesAsync()
         {
             var list = new List<Exercise>();
             const string query = @"
@@ -158,7 +154,7 @@ namespace LiftIt.Models
         }
 
         // ---- Workout plans ----
-        public async Task<List<WorkoutPlan>> GetWorkoutPlansForUserAsync(int userId)
+        public virtual async Task<List<WorkoutPlan>> GetWorkoutPlansForUserAsync(int userId)
         {
             var list = new List<WorkoutPlan>();
             const string query = "SELECT id, user_id, name, creation_date FROM workout_plans WHERE user_id = @uid ORDER BY creation_date DESC";
@@ -312,7 +308,7 @@ namespace LiftIt.Models
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
         }
 
-        public async Task<List<ExercisesInPlan>> GetExercisesInPlanAsync(int planId)
+        public virtual async Task<List<ExercisesInPlan>> GetExercisesInPlanAsync(int planId)
         {
             var list = new List<ExercisesInPlan>();
             const string query = @"
@@ -348,7 +344,7 @@ namespace LiftIt.Models
         }
 
         // --- metody sesji treningowej i setów ---
-        public async Task<int> StartTrainingSessionAsync(int userId)
+        public virtual async Task<int> StartTrainingSessionAsync(int userId)
         {
             const string insert = "INSERT INTO trainings_history (user_id, start_time) VALUES (@uid, CURRENT_TIMESTAMP()); SELECT LAST_INSERT_ID();";
             try
@@ -363,7 +359,7 @@ namespace LiftIt.Models
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); return 0; }
         }
 
-        public async Task<bool> EndTrainingSessionAsync(int trainingId, DateTime? endTime, string notes)
+        public virtual async Task<bool> EndTrainingSessionAsync(int trainingId, DateTime? endTime, string notes)
         {
             const string update = "UPDATE trainings_history SET end_time = @end, notes = @notes WHERE id = @id";
             try
@@ -388,7 +384,7 @@ namespace LiftIt.Models
 
         // ZMIANA NAZWY: Metoda wcześniej nazywała się GetSetsForTrainingAsync. 
         // Zmieniłem ją, żeby pasowała do Prezentera
-        public async Task<List<SetRecord>> GetSetsForSessionAsync(int trainingId)
+        public virtual async Task<List<SetRecord>> GetSetsForSessionAsync(int trainingId)
         {
             var list = new List<SetRecord>();
             const string query = "SELECT id, training_id, exercise_id, set_number, weight, reps FROM sets WHERE training_id = @t ORDER BY exercise_id, set_number";
@@ -465,7 +461,7 @@ namespace LiftIt.Models
             }
         }
 
-        public async Task<List<TrainingHistoryDto>> GetUserTrainingHistoryAsyncTwo(int userId)
+        public virtual async Task<List<TrainingHistoryDto>> GetUserTrainingHistoryAsyncTwo(int userId)
         {
             var trainingList = new List<TrainingHistoryDto>();
 
@@ -562,7 +558,7 @@ namespace LiftIt.Models
             return (trainingId, items);
         }
 
-        public async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
+        public virtual async Task<bool> ModifyProfileInMySQL(int userId, string nowyLogin, string noweHaslo, string nowyEmail)
         {
             // Sprawdzamy, które pola użytkownik faktycznie uzupełnił
             bool zmieniamyLogin = !string.IsNullOrWhiteSpace(nowyLogin);

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Interfaces
 {
-    internal interface IHome
+    public interface IHome
     {
     }
 }

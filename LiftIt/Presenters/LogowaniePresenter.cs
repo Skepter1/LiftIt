@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Presenters
 {
-    internal class LogowaniePresenter
+    public class LogowaniePresenter
     {
         private readonly Interfaces.ILogowanieView _view;
         private readonly Models.DatabaseContext _dbContext;

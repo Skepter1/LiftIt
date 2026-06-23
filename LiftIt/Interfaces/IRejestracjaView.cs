@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Interfaces
 {
-    internal interface IRejestracjaView
+    public interface IRejestracjaView
     {
         string Login { get; set; }
         string Email { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LiftIt.Interfaces
 {
-    internal interface ILogowanieView
+    public interface ILogowanieView
     {
         string Email { get; set; }
         string Password { get; set; }

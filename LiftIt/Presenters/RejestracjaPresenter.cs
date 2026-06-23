@@ -2,7 +2,7 @@
 
 namespace LiftIt.Presenters
 {
-    internal class RejestracjaPresenter
+    public class RejestracjaPresenter
     {
         private readonly Interfaces.IRejestracjaView _view;
         private readonly Models.DatabaseContext _dbContext;
